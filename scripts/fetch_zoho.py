@@ -1,12 +1,7 @@
 import os
-import json
-import calendar
 import requests
-from datetime import datetime, timezone
 
 ZOHO_TOKEN_URL = "https://accounts.zoho.com/oauth/v2/token"
-ZOHO_BASE = "https://www.zohoapis.com/inventory/v1"
-ZOHO_ITEMS_URL = f"{ZOHO_BASE}/items"
 
 
 def get_access_token(client_id, client_secret, refresh_token):
@@ -23,35 +18,43 @@ def get_access_token(client_id, client_secret, refresh_token):
     return token_data["access_token"]
 
 
-def probe_endpoints(headers, org_id):
-    """Try candidate assembly order endpoints and print results."""
+def probe(headers, org_id):
     candidates = [
-        f"{ZOHO_BASE}/assemblyorders",
-        f"{ZOHO_BASE}/compositeitems/assemblyorders",
-        f"{ZOHO_BASE}/assembly_orders",
-        f"{ZOHO_BASE}/manufacturingorders",
-        f"{ZOHO_BASE}/manufacturing_orders",
+        # v2 API
+        "https://www.zohoapis.com/inventory/v2/assemblyorders",
+        # alternative host
+        "https://inventory.zoho.com/api/v1/assemblyorders",
+        # known-good endpoints to confirm auth scope
+        "https://www.zohoapis.com/inventory/v1/salesorders",
+        "https://www.zohoapis.com/inventory/v1/purchaseorders",
+        # composite item detail (contains assembly info?)
+        "https://www.zohoapis.com/inventory/v1/compositeitems?page=1&per_page=1",
     ]
-    params = {"organization_id": org_id, "per_page": 1}
-    print("--- Probing assembly order endpoints ---")
-    for url in candidates:
-        resp = requests.get(url, headers=headers, params=params)
-        snippet = resp.text[:200].replace("\n", " ")
-        print(f"  {url.split('/v1/')[1]}: HTTP {resp.status_code} -> {snippet}")
+    params_base = {"organization_id": org_id, "per_page": 1}
 
-    # Also try fetching composite items and then their assembly orders
-    print("--- Trying composite items list ---")
-    resp = requests.get(f"{ZOHO_BASE}/compositeitems", headers=headers, params={"organization_id": org_id, "per_page": 1})
-    print(f"  compositeitems: HTTP {resp.status_code} -> {resp.text[:300].replace(chr(10), ' ')}")
-    if resp.ok:
-        body = resp.json()
+    for url in candidates:
+        resp = requests.get(url, headers=headers, params=params_base)
+        keys = ""
+        if resp.ok:
+            try:
+                keys = list(resp.json().keys())
+            except Exception:
+                pass
+        snippet = resp.text[:200].replace("\n", " ")
+        print(f"  [{resp.status_code}] {url.split('zoho')[1]}: keys={keys} | {snippet[:120]}")
+
+    # Check full composite item response keys for assembly-related fields
+    print("\n--- Composite item detail keys ---")
+    r = requests.get("https://www.zohoapis.com/inventory/v1/compositeitems", headers=headers, params={"organization_id": org_id, "per_page": 1})
+    if r.ok:
+        body = r.json()
         items = body.get("composite_items", [])
         if items:
-            cid = items[0].get("item_id") or items[0].get("composite_item_id")
-            print(f"  First composite item id: {cid}")
-            if cid:
-                r2 = requests.get(f"{ZOHO_BASE}/compositeitems/{cid}/assemblyorders", headers=headers, params={"organization_id": org_id})
-                print(f"  compositeitems/{cid}/assemblyorders: HTTP {r2.status_code} -> {r2.text[:300].replace(chr(10), ' ')}")
+            cid = items[0].get("composite_item_id") or items[0].get("item_id")
+            r2 = requests.get(f"https://www.zohoapis.com/inventory/v1/compositeitems/{cid}", headers=headers, params={"organization_id": org_id})
+            if r2.ok:
+                detail = r2.json().get("composite_item", {})
+                print(f"  Top-level keys: {list(detail.keys())}")
 
 
 def main():
@@ -64,7 +67,8 @@ def main():
     access_token = get_access_token(client_id, client_secret, refresh_token)
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
-    probe_endpoints(headers, org_id)
+    print("--- Probing endpoints ---")
+    probe(headers, org_id)
 
 
 if __name__ == "__main__":
