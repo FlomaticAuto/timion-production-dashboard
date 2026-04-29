@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 ZOHO_TOKEN_URL = "https://accounts.zoho.com/oauth/v2/token"
 ZOHO_ITEMS_URL = "https://www.zohoapis.com/inventory/v1/items"
-ZOHO_ASSEMBLY_URL = "https://www.zohoapis.com/inventory/v1/compositeitems/assemblyorders"
+ZOHO_ASSEMBLY_URL = "https://www.zohoapis.com/inventory/v1/assemblyorders"
 
 
 def get_access_token(client_id, client_secret, refresh_token):
@@ -60,8 +60,6 @@ def build_item_type_map(items):
 
 
 def make_record(order):
-    # Zoho assembly order field names — composite_item_id/name are used when
-    # fetching via the assemblyorders endpoint.
     return {
         "assembly_number": (
             order.get("assembly_order_number")
@@ -116,7 +114,6 @@ def classify_orders(assembly_orders, item_type_map):
             else:
                 subassemblies_completed.append(record)
         else:
-            # Item type unknown or not set — skip
             skipped += 1
 
     if skipped:
@@ -204,7 +201,7 @@ def main():
     print("Wrote data/latest.json")
 
     months = update_index("data/index.json", month_str)
-    print(f"Wrote data/index.json — available months: {months}")
+    print(f"Wrote data/index.json - available months: {months}")
 
 
 if __name__ == "__main__":
