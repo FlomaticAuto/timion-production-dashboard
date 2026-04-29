@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --bg: #ffffff;
+      --bg-alt: #f5f5f5;
+      --bg-card: #fafafa;
+      --border: #e0e0e0;
+      --text: #1a1a1a;
+      --text-muted: #6b6b6b;
+      --accent-amber: #c97a1a;
+      --accent-green: #2e7d52;
+      --accent-amber-bg: #fef9f0;
+      --accent-green-bg: #f0faf4;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .site-header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .last-synced {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── Month navigation ── */
+    .month-nav {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .month-nav button {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      width: 30px;
+      height: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      transition: background 0.1s;
+    }
+
+    .month-nav button:hover:not(:disabled) {
+      background: var(--border);
+    }
+
+    .month-nav button:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .month-label {
+      font-size: 15px;
+      font-weight: 500;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    /* ── Layout ── */
+    .main {
+      padding: 24px;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 720px) {
+      .columns { grid-template-columns: 1fr; }
+      .main { padding: 16px; }
+      .site-header { padding: 12px 16px; }
+      .month-nav { padding: 10px 16px; }
+    }
+
+    /* ── Column ── */
+    .column-header {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .summary-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .summary-chip {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .summary-chip strong {
+      display: block;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 8px 12px;
+      border-left: 3px solid;
+      margin-bottom: 10px;
+    }
+
+    .section-header.in-production {
+      border-color: var(--accent-amber);
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber);
+    }
+
+    .section-header.completed {
+      border-color: var(--accent-green);
+      background: var(--accent-green-bg);
+      color: var(--accent-green);
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-weight: 500;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .card-meta span::before {
+      content: attr(data-label) ": ";
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* ── States ── */
+    .empty-state {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 12px 0 4px;
+    }
+
+    .loading-overlay {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .error-message {
+      background: #fff5f5;
+      border: 1px solid #fca5a5;
+      border-radius: 4px;
+      padding: 14px 16px;
+      color: #b91c1c;
+      font-size: 13px;
+      margin: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Production Dashboard</h1>
+    <span class="last-synced" id="last-synced"></span>
+  </header>
+
+  <nav class="month-nav">
+    <button id="btn-prev" title="Previous month">&#8592;</button>
+    <span class="month-label" id="month-label">—</span>
+    <button id="btn-next" title="Next month">&#8594;</button>
+  </nav>
+
+  <main class="main" id="main-content">
+    <div class="loading-overlay">Loading data&hellip;</div>
+  </main>
+
+  <script>
+    const MONTH_NAMES = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+
+    let availableMonths = [];
+    let currentIndex = 0;
+
+    function formatMonth(ym) {
+      const [y, m] = ym.split("-");
+      return `${MONTH_NAMES[parseInt(m, 10) - 1]} ${y}`;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "—";
+      const [y, m, d] = dateStr.split("-");
+      if (!y || !m || !d) return dateStr;
+      return `${parseInt(d, 10)} ${MONTH_NAMES[parseInt(m, 10) - 1]} ${y}`;
+    }
+
+    function formatTimestamp(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      if (isNaN(d)) return iso;
+      return `Last synced: ${d.toLocaleString("en-ZA", {
+        day: "numeric", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit", timeZone: "Africa/Johannesburg"
+      })} SAST`;
+    }
+
+    function renderCards(records) {
+      if (!records || records.length === 0) {
+        return `<p class="empty-state">No records for this period</p>`;
+      }
+      return records.map(r => `
+        <div class="card">
+          <div class="card-title">${esc(r.item_name)}</div>
+          <div class="card-meta">
+            <span data-label="Order">${esc(r.assembly_number)}</span>
+            <span data-label="Qty">${esc(String(r.quantity))}</span>
+            <span data-label="Date">${esc(formatDate(r.date))}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderColumn(label, group) {
+      const ipCount = group.in_production.length;
+      const doneCount = group.completed.length;
+      return `
+        <div>
+          <div class="column-header">${label}</div>
+          <div class="summary-row">
+            <div class="summary-chip">
+              <strong>${ipCount}</strong>In Production
+            </div>
+            <div class="summary-chip">
+              <strong>${doneCount}</strong>Assembly Completed
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-header in-production">In Production</div>
+            ${renderCards(group.in_production)}
+          </div>
+          <div class="section">
+            <div class="section-header completed">Assembly Completed</div>
+            ${renderCards(group.completed)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard(data) {
+      document.getElementById("last-synced").textContent = formatTimestamp(data.generated_at);
+      const main = document.getElementById("main-content");
+      main.innerHTML = `
+        <div class="columns">
+          ${renderColumn("Finished Products", data.finished_products)}
+          ${renderColumn("Subassemblies", data.subassemblies)}
+        </div>
+      `;
+    }
+
+    function renderError(msg) {
+      document.getElementById("main-content").innerHTML =
+        `<div class="error-message">${esc(msg)}</div>`;
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function updateNav() {
+      const label = availableMonths[currentIndex];
+      document.getElementById("month-label").textContent = label ? formatMonth(label) : "—";
+      document.getElementById("btn-prev").disabled = currentIndex >= availableMonths.length - 1;
+      document.getElementById("btn-next").disabled = currentIndex <= 0;
+    }
+
+    async function loadMonth(ym) {
+      document.getElementById("main-content").innerHTML =
+        `<div class="loading-overlay">Loading data&hellip;</div>`;
+      try {
+        const resp = await fetch(`data/${ym}.json?_=${Date.now()}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        renderDashboard(data);
+      } catch (e) {
+        renderError(`Failed to load data for ${formatMonth(ym)}: ${e.message}`);
+      }
+    }
+
+    async function init() {
+      // Load available months index
+      try {
+        const resp = await fetch(`data/index.json?_=${Date.now()}`);
+        if (resp.ok) {
+          availableMonths = await resp.json();
+        }
+      } catch (_) {
+        availableMonths = [];
+      }
+
+      // Load latest data
+      try {
+        const resp = await fetch(`data/latest.json?_=${Date.now()}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+
+        // Sync currentIndex to the month in latest.json
+        const monthInData = data.month;
+        const idx = availableMonths.indexOf(monthInData);
+        currentIndex = idx >= 0 ? idx : 0;
+
+        // If index was empty, populate with at least this month
+        if (availableMonths.length === 0 && monthInData) {
+          availableMonths = [monthInData];
+        }
+
+        updateNav();
+        renderDashboard(data);
+      } catch (e) {
+        updateNav();
+        // No latest.json yet — show empty state message
+        if (availableMonths.length === 0) {
+          document.getElementById("main-content").innerHTML =
+            `<div class="error-message">No data available yet. Run the GitHub Action manually to generate the first data files.</div>`;
+        } else {
+          renderError(`Could not load dashboard data: ${e.message}`);
+        }
+      }
+    }
+
+    document.getElementById("btn-prev").addEventListener("click", () => {
+      if (currentIndex < availableMonths.length - 1) {
+        currentIndex++;
+        updateNav();
+        loadMonth(availableMonths[currentIndex]);
+      }
+    });
+
+    document.getElementById("btn-next").addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateNav();
+        loadMonth(availableMonths[currentIndex]);
+      }
+    });
+
+    init();
+  </script>
+
+</body>
+</html>
