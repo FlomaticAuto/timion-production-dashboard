@@ -20,25 +20,30 @@ def get_access_token(client_id, client_secret, refresh_token):
 
 
 def probe(headers, org_id):
+    params = {"organization_id": org_id, "per_page": 2}
+
     candidates = [
-        f"{BASE}/manufacture",
-        f"{BASE}/manufacture/orders",
-        f"{BASE}/workorders",
-        f"{BASE}/work_orders",
-        f"{BASE}/assembly",
-        f"{BASE}/assembly/orders",
-        f"{BASE}/production",
-        f"{BASE}/productionorders",
-        f"{BASE}/reports/assemblyorders",
-        f"{BASE}/reports/assembly_orders",
-        f"{BASE}/reports",
-        f"{BASE}/",
+        f"{BASE}/itemadjustments",
+        f"{BASE}/inventoryadjustments",
+        f"{BASE}/stockadjustments",
+        f"{BASE}/transfers",
+        f"{BASE}/inventoryhistory",
+        f"{BASE}/stockhistory",
+        f"{BASE}/journals",
+        "https://www.zohoapis.com/books/v3/assemblyorders",
+        "https://www.zohoapis.com/books/v3/itemadjustments",
     ]
-    params = {"organization_id": org_id, "per_page": 1}
+
     for url in candidates:
         resp = requests.get(url, headers=headers, params=params)
-        snippet = resp.text[:150].replace("\n", " ")
-        print(f"  [{resp.status_code}] ...{url.split('/v1')[1] or '/'}: {snippet}")
+        snippet = resp.text[:200].replace("\n", " ")
+        label = url.split("/v")[1] if "/v" in url else url
+        print(f"  [{resp.status_code}] ...{label}: {snippet[:150]}")
+
+    # Deep-dive item adjustments if it works
+    print("\n--- Item adjustments detail ---")
+    r = requests.get(f"{BASE}/itemadjustments", headers=headers, params={"organization_id": org_id, "per_page": 3})
+    print(f"  HTTP {r.status_code}: {r.text[:600]}")
 
 
 def main():
@@ -51,7 +56,7 @@ def main():
     access_token = get_access_token(client_id, client_secret, refresh_token)
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
-    print("--- Probing remaining candidates ---")
+    print("--- Probing ---")
     probe(headers, org_id)
 
 
