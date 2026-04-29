@@ -29,7 +29,10 @@ def fetch_all_pages(url, headers, params, data_key):
     while True:
         p = {**params, "page": page, "per_page": 200}
         resp = requests.get(url, headers=headers, params=p)
-        resp.raise_for_status()
+        if not resp.ok:
+            print(f"  HTTP {resp.status_code} from {resp.url}")
+            print(f"  Response: {resp.text[:500]}")
+            resp.raise_for_status()
         body = resp.json()
         if body.get("code", 0) != 0:
             raise RuntimeError(f"Zoho API error: {body.get('message')} (code {body.get('code')})")
