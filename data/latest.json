@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-30T12:21:18Z",
+  "generated_at": "2026-04-30T12:49:42Z",
   "month": "2026-04",
   "finished_products": {
     "in_production": [
@@ -7,19 +7,28 @@
         "assembly_number": "ASSY-00135",
         "item_name": "Comp test (composite)",
         "quantity": 1.0,
-        "date": "2026-04-30"
+        "date": "2026-04-30",
+        "production_staff": [
+          "Oswald"
+        ]
       },
       {
         "assembly_number": "ASSY-00131",
         "item_name": "Reverse Rollator (CNC) Small",
         "quantity": 4.0,
-        "date": "2026-04-09"
+        "date": "2026-04-09",
+        "production_staff": [
+          "JJ"
+        ]
       },
       {
         "assembly_number": "ASSY-00132",
         "item_name": "Toilet bench L 33-46cm CNC",
         "quantity": 7.0,
-        "date": "2026-04-14"
+        "date": "2026-04-14",
+        "production_staff": [
+          "Lucas"
+        ]
       }
     ],
     "completed": [
@@ -27,7 +36,10 @@
         "assembly_number": "ASSY-00127",
         "item_name": "Standing frame small",
         "quantity": 10.0,
-        "date": "2026-04-07"
+        "date": "2026-04-07",
+        "production_staff": [
+          "Qhamani"
+        ]
       }
     ]
   },
@@ -37,13 +49,19 @@
         "assembly_number": "ASSY-00133",
         "item_name": "Standing Frame Cushions",
         "quantity": 20.0,
-        "date": "2026-04-14"
+        "date": "2026-04-14",
+        "production_staff": [
+          "Oswald"
+        ]
       },
       {
         "assembly_number": "ASSY-00129",
         "item_name": "Standing Frame Cushions Cover Set",
         "quantity": 10.0,
-        "date": "2026-04-09"
+        "date": "2026-04-09",
+        "production_staff": [
+          "Naomi"
+        ]
       }
     ],
     "completed": [
@@ -51,13 +69,19 @@
         "assembly_number": "ASSY-00125",
         "item_name": "Standing Frame Cushions",
         "quantity": 10.0,
-        "date": "2026-04-02"
+        "date": "2026-04-02",
+        "production_staff": [
+          "Qhamani"
+        ]
       },
       {
         "assembly_number": "ASSY-00126",
         "item_name": "Standing Frame Cushions Cover Set",
         "quantity": 10.0,
-        "date": "2026-04-02"
+        "date": "2026-04-02",
+        "production_staff": [
+          "Qhamani"
+        ]
       }
     ]
   }
