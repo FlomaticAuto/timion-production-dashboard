@@ -35,10 +35,29 @@
       border-bottom: 1px solid var(--border);
       padding: 16px 24px;
       display: flex;
-      align-items: baseline;
+      align-items: center;
+      justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
     }
+
+    .header-left { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+
+    .view-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+
+    .view-btn {
+      padding: 7px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      background: var(--bg-alt);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .view-btn:first-child { border-right: 1px solid var(--border); }
+    .view-btn.active { background: var(--text); color: var(--bg); }
 
     .site-header h1 {
       font-size: 20px;
@@ -235,13 +254,113 @@
       font-size: 13px;
       margin: 24px;
     }
+
+    /* ── Analytics ── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 18px;
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+    .a-section { margin-bottom: 30px; }
+
+    .a-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .a-legend { font-size: 11px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    .a-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    @media (max-width: 720px) { .a-columns { grid-template-columns: 1fr; } }
+
+    .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 32px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label { font-size: 12px; color: var(--text-muted); text-align: right; white-space: nowrap; }
+
+    .bar-track {
+      background: var(--bg-alt);
+      border-radius: 3px;
+      height: 22px;
+      overflow: hidden;
+      display: flex;
+      gap: 1px;
+    }
+
+    .bar-fp { background: var(--accent-amber); height: 100%; transition: width 0.4s ease; }
+    .bar-sa { background: var(--accent-green); height: 100%; transition: width 0.4s ease; }
+    .bar-total { font-size: 12px; font-weight: 600; color: var(--text); text-align: right; }
+
+    .rank-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .rank-row {
+      display: grid;
+      grid-template-columns: 18px 1fr 70px 30px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rank-num { font-size: 11px; color: var(--text-muted); text-align: right; }
+    .rank-name { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rank-bar { height: 6px; border-radius: 3px; min-width: 2px; }
+    .rank-val { font-size: 12px; font-weight: 600; text-align: right; }
   </style>
 </head>
 <body>
 
   <header class="site-header">
-    <h1>Production Dashboard</h1>
-    <span class="last-synced" id="last-synced"></span>
+    <div class="header-left">
+      <h1>Production Dashboard</h1>
+      <span class="last-synced" id="last-synced"></span>
+    </div>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-view-monthly">Monthly</button>
+      <button class="view-btn" id="btn-view-analytics">Analytics</button>
+    </div>
   </header>
 
   <nav class="month-nav">
@@ -262,6 +381,8 @@
 
     let availableMonths = [];
     let currentIndex = 0;
+    let analyticsCache = null;
+    let currentView = "monthly";
 
     function formatMonth(ym) {
       const [y, m] = ym.split("-");
@@ -393,6 +514,164 @@
       }
     }
 
+    async function loadAllMonths() {
+      const results = {};
+      await Promise.all(availableMonths.map(async ym => {
+        try {
+          const r = await fetch(`data/${ym}.json?_=${Date.now()}`);
+          if (r.ok) results[ym] = await r.json();
+        } catch (_) {}
+      }));
+      return results;
+    }
+
+    function computeAnalytics(allData) {
+      const months = [...availableMonths].reverse().filter(ym => allData[ym]);
+      const stats = months.map(ym => {
+        const d = allData[ym];
+        const fpDone = d.finished_products.completed;
+        const saDone = d.subassemblies.completed;
+        const allIP = [...d.finished_products.in_production, ...d.subassemblies.in_production];
+        return {
+          month: ym,
+          label: formatMonth(ym),
+          fpCount: fpDone.length,
+          saCount: saDone.length,
+          fpQty: fpDone.reduce((s, r) => s + (r.quantity || 0), 0),
+          saQty: saDone.reduce((s, r) => s + (r.quantity || 0), 0),
+          ipCount: allIP.length,
+          allDone: [...fpDone, ...saDone],
+        };
+      });
+
+      const totalCount = stats.reduce((s, m) => s + m.fpCount + m.saCount, 0);
+      const totalQty = stats.reduce((s, m) => s + m.fpQty + m.saQty, 0);
+      const current = stats[stats.length - 1] || {};
+
+      const itemMap = {};
+      stats.forEach(m => m.allDone.forEach(r => {
+        const k = r.item_name || "Unknown";
+        if (!itemMap[k]) itemMap[k] = 0;
+        itemMap[k] += r.quantity || 0;
+      }));
+      const topItems = Object.entries(itemMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+      const staffMap = {};
+      stats.forEach(m => m.allDone.forEach(r => {
+        (r.production_staff || []).forEach(name => { staffMap[name] = (staffMap[name] || 0) + 1; });
+      }));
+      const staffList = Object.entries(staffMap).sort((a, b) => b[1] - a[1]);
+
+      return { stats, totalCount, totalQty, current, topItems, staffList };
+    }
+
+    function renderAnalytics(a) {
+      const curDone = (a.current.fpCount || 0) + (a.current.saCount || 0);
+      const curIP   = a.current.ipCount || 0;
+      const curLabel = a.current.label || "—";
+
+      const maxDone = Math.max(...a.stats.map(m => m.fpCount + m.saCount), 1);
+      const bars = [...a.stats].reverse().map(m => {
+        const total = m.fpCount + m.saCount;
+        const fpPct = (m.fpCount / maxDone * 100).toFixed(1);
+        const saPct = (m.saCount / maxDone * 100).toFixed(1);
+        return `<div class="bar-row">
+          <span class="bar-label">${m.label}</span>
+          <div class="bar-track">
+            <div class="bar-fp" style="width:${fpPct}%"></div>
+            <div class="bar-sa" style="width:${saPct}%"></div>
+          </div>
+          <span class="bar-total">${total}</span>
+        </div>`;
+      }).join("");
+
+      const maxItemQty = a.topItems.length ? a.topItems[0][1] : 1;
+      const itemRows = a.topItems.map(([name, qty], i) => `
+        <div class="rank-row">
+          <span class="rank-num">${i + 1}</span>
+          <span class="rank-name" title="${esc(name)}">${esc(name)}</span>
+          <div class="rank-bar" style="width:${(qty/maxItemQty*100).toFixed(1)}%;background:var(--accent-amber)"></div>
+          <span class="rank-val">${qty}</span>
+        </div>`).join("") || `<p class="empty-state">No completed assemblies yet</p>`;
+
+      const maxStaff = a.staffList.length ? a.staffList[0][1] : 1;
+      const staffRows = a.staffList.map(([name, count], i) => `
+        <div class="rank-row">
+          <span class="rank-num">${i + 1}</span>
+          <span class="rank-name" title="${esc(name)}">${esc(name)}</span>
+          <div class="rank-bar" style="width:${(count/maxStaff*100).toFixed(1)}%;background:var(--accent-green)"></div>
+          <span class="rank-val">${count}</span>
+        </div>`).join("") || `<p class="empty-state">No staff data available</p>`;
+
+      document.getElementById("main-content").innerHTML = `
+        <div class="a-section">
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <div class="kpi-value">${a.totalCount}</div>
+              <div class="kpi-label">Total Completed</div>
+              <div class="kpi-sub">${a.totalQty} units · ${a.stats.length} month${a.stats.length !== 1 ? "s" : ""}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-value">${curDone}</div>
+              <div class="kpi-label">Completed This Month</div>
+              <div class="kpi-sub">${curLabel}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-value">${curIP}</div>
+              <div class="kpi-label">In Production Now</div>
+              <div class="kpi-sub">As of last sync</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-value">${a.topItems.length}</div>
+              <div class="kpi-label">Unique Items</div>
+              <div class="kpi-sub">Assembled across all months</div>
+            </div>
+          </div>
+        </div>
+        <div class="a-section">
+          <div class="a-title">
+            Assemblies Completed per Month
+            <span class="a-legend">
+              <span style="color:var(--accent-amber)">■</span> Finished Products &nbsp;
+              <span style="color:var(--accent-green)">■</span> Subassemblies
+            </span>
+          </div>
+          <div class="bar-chart">${bars || '<p class="empty-state">No data</p>'}</div>
+        </div>
+        <div class="a-columns">
+          <div class="a-section">
+            <div class="a-title">Top Items by Units Completed</div>
+            <div class="rank-list">${itemRows}</div>
+          </div>
+          <div class="a-section">
+            <div class="a-title">Production Staff Activity</div>
+            <div class="rank-list">${staffRows}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function showAnalytics() {
+      if (!analyticsCache) {
+        document.getElementById("main-content").innerHTML =
+          `<div class="loading-overlay">Loading analytics&hellip;</div>`;
+        analyticsCache = computeAnalytics(await loadAllMonths());
+      }
+      renderAnalytics(analyticsCache);
+    }
+
+    function showView(view) {
+      currentView = view;
+      document.getElementById("btn-view-monthly").classList.toggle("active", view === "monthly");
+      document.getElementById("btn-view-analytics").classList.toggle("active", view === "analytics");
+      document.querySelector(".month-nav").style.display = view === "monthly" ? "" : "none";
+      if (view === "monthly") {
+        loadMonth(availableMonths[currentIndex]);
+      } else {
+        showAnalytics();
+      }
+    }
+
     async function init() {
       // Load available months index
       try {
@@ -433,6 +712,14 @@
         }
       }
     }
+
+    document.getElementById("btn-view-monthly").addEventListener("click", () => {
+      if (currentView !== "monthly") showView("monthly");
+    });
+
+    document.getElementById("btn-view-analytics").addEventListener("click", () => {
+      if (currentView !== "analytics") showView("analytics");
+    });
 
     document.getElementById("btn-prev").addEventListener("click", () => {
       if (currentIndex < availableMonths.length - 1) {
