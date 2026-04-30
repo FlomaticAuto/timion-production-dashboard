@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-30T13:08:03Z",
+  "generated_at": "2026-04-30T13:17:34Z",
   "month": "2026-04",
   "finished_products": {
     "in_production": [
@@ -10,7 +10,8 @@
         "date": "2026-04-30",
         "production_staff": [
           "Oswald"
-        ]
+        ],
+        "serial_numbers": []
       },
       {
         "assembly_number": "ASSY-00131",
@@ -19,6 +20,12 @@
         "date": "2026-04-09",
         "production_staff": [
           "JJ"
+        ],
+        "serial_numbers": [
+          "RR472",
+          "RR473",
+          "RR474",
+          "RR475"
         ]
       },
       {
@@ -28,6 +35,15 @@
         "date": "2026-04-14",
         "production_staff": [
           "Lucas"
+        ],
+        "serial_numbers": [
+          "TB476",
+          "TB477",
+          "TB478",
+          "TB479",
+          "TB480",
+          "TB481",
+          "TB482"
         ]
       }
     ],
@@ -39,6 +55,18 @@
         "date": "2026-04-07",
         "production_staff": [
           "Qhamani"
+        ],
+        "serial_numbers": [
+          "SF412",
+          "SF413",
+          "SF414",
+          "SF415",
+          "SF416",
+          "SF417",
+          "SF418",
+          "SF419",
+          "SF420",
+          "SF421"
         ]
       }
     ]
@@ -52,7 +80,8 @@
         "date": "2026-04-14",
         "production_staff": [
           "Oswald"
-        ]
+        ],
+        "serial_numbers": []
       },
       {
         "assembly_number": "ASSY-00129",
@@ -61,7 +90,8 @@
         "date": "2026-04-09",
         "production_staff": [
           "Naomi"
-        ]
+        ],
+        "serial_numbers": []
       }
     ],
     "completed": [
@@ -72,7 +102,8 @@
         "date": "2026-04-02",
         "production_staff": [
           "Qhamani"
-        ]
+        ],
+        "serial_numbers": []
       },
       {
         "assembly_number": "ASSY-00126",
@@ -81,7 +112,8 @@
         "date": "2026-04-02",
         "production_staff": [
           "Qhamani"
-        ]
+        ],
+        "serial_numbers": []
       }
     ]
   }
