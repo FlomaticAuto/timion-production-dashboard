@@ -102,6 +102,12 @@ def main():
         "composite_items",
     )
 
+    if all_composite_items:
+        first = all_composite_items[0]
+        cid = str(first.get("composite_item_id", ""))
+        print(f"  DEBUG composite_item_id sample: {cid!r}, map lookup: {item_type_map.get(cid)!r}")
+        print(f"  DEBUG sample map keys: {list(item_type_map.keys())[:5]}")
+
     production_items = []
     for item in all_composite_items:
         cf_item_type = item_type_map.get(str(item.get("composite_item_id", "")))
