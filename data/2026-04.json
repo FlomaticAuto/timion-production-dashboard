@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-30T12:03:19Z",
+  "generated_at": "2026-04-30T12:21:18Z",
   "month": "2026-04",
   "finished_products": {
     "in_production": [
@@ -16,19 +16,20 @@
         "date": "2026-04-09"
       },
       {
-        "assembly_number": "ASSY-00127",
-        "item_name": "Standing frame small",
-        "quantity": 10.0,
-        "date": "2026-04-07"
-      },
-      {
         "assembly_number": "ASSY-00132",
         "item_name": "Toilet bench L 33-46cm CNC",
         "quantity": 7.0,
         "date": "2026-04-14"
       }
     ],
-    "completed": []
+    "completed": [
+      {
+        "assembly_number": "ASSY-00127",
+        "item_name": "Standing frame small",
+        "quantity": 10.0,
+        "date": "2026-04-07"
+      }
+    ]
   },
   "subassemblies": {
     "in_production": [
@@ -39,16 +40,18 @@
         "date": "2026-04-14"
       },
       {
-        "assembly_number": "ASSY-00125",
-        "item_name": "Standing Frame Cushions",
-        "quantity": 10.0,
-        "date": "2026-04-02"
-      },
-      {
         "assembly_number": "ASSY-00129",
         "item_name": "Standing Frame Cushions Cover Set",
         "quantity": 10.0,
         "date": "2026-04-09"
+      }
+    ],
+    "completed": [
+      {
+        "assembly_number": "ASSY-00125",
+        "item_name": "Standing Frame Cushions",
+        "quantity": 10.0,
+        "date": "2026-04-02"
       },
       {
         "assembly_number": "ASSY-00126",
@@ -56,7 +59,6 @@
         "quantity": 10.0,
         "date": "2026-04-02"
       }
-    ],
-    "completed": []
+    ]
   }
 }
