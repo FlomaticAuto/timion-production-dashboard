@@ -130,15 +130,10 @@ def main():
             "bundles",
         )
 
-        assembled_all = [b for b in bundles if b.get("status") == "assembled"]
-        if assembled_all:
-            print(f"  DEBUG assembled bundles for {item['name']}: {[{'date': b.get('date'), 'status': b.get('status'), 'ref': b.get('reference_number')} for b in assembled_all]}")
-
         month_bundles = [b for b in bundles if b.get("date", "").startswith(month_prefix)]
 
         if month_bundles:
-            statuses = [b.get("status") for b in month_bundles]
-            print(f"  [{i}/{len(production_items)}] {item['name']}: {len(month_bundles)} bundle(s) this month — statuses: {statuses}")
+            print(f"  [{i}/{len(production_items)}] {item['name']}: {len(month_bundles)} bundle(s) this month")
 
         for bundle in month_bundles:
             record = {
@@ -148,7 +143,7 @@ def main():
                 "date": bundle.get("date", ""),
             }
 
-            is_completed = bundle.get("status") == "assembled"
+            is_completed = bundle.get("status") == "bundled"
 
             if item["cf_item_type"] == "Finished Product / Sales Product":
                 if is_completed:
