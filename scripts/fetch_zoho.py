@@ -1,10 +1,10 @@
 import os
 import json
+import time
 import requests
 from datetime import datetime, timezone
 
 ZOHO_TOKEN_URL = "https://accounts.zoho.com/oauth/v2/token"
-ZOHO_ITEMS_URL = "https://www.zohoapis.com/inventory/v1/items"
 ZOHO_COMPOSITE_ITEMS_URL = "https://www.zohoapis.com/inventory/v1/compositeitems"
 ZOHO_BUNDLES_URL = "https://www.zohoapis.com/inventory/v1/bundles"
 
@@ -80,40 +80,33 @@ def main():
     month_str = now.strftime("%Y-%m")
     month_prefix = now.strftime("%Y-%m-")
 
-    print("Fetching items (for cf_item_type map)...")
-    all_items = fetch_all_pages(
-        ZOHO_ITEMS_URL,
-        headers,
-        {"organization_id": org_id},
-        "items",
-    )
-    item_type_map = {
-        str(item["item_id"]): get_cf_item_type(item)
-        for item in all_items
-        if item.get("item_id")
-    }
-    print(f"  Built type map for {len(item_type_map)} items")
-    sample_item = next((i for i in all_items if str(i.get("item_id")) == "6010567000011049337"), None)
-    if sample_item:
-        print(f"  DEBUG sample item custom_fields: {sample_item.get('custom_fields')}")
-
-    print("Fetching composite items...")
+    print("Fetching composite items list...")
     all_composite_items = fetch_all_pages(
         ZOHO_COMPOSITE_ITEMS_URL,
         headers,
         {"organization_id": org_id},
         "composite_items",
     )
+    print(f"  {len(all_composite_items)} composite items found")
 
-    if all_composite_items:
-        first = all_composite_items[0]
-        cid = str(first.get("composite_item_id", ""))
-        print(f"  DEBUG composite_item_id sample: {cid!r}, map lookup: {item_type_map.get(cid)!r}")
-        print(f"  DEBUG sample map keys: {list(item_type_map.keys())[:5]}")
-
+    print("Fetching composite item details to read cf_item_type (custom fields only available in detail endpoint)...")
     production_items = []
-    for item in all_composite_items:
-        cf_item_type = item_type_map.get(str(item.get("composite_item_id", "")))
+    for i, item in enumerate(all_composite_items, 1):
+        if i % 100 == 0:
+            print(f"  {i}/{len(all_composite_items)} details fetched...")
+        resp = requests.get(
+            f"{ZOHO_COMPOSITE_ITEMS_URL}/{item['composite_item_id']}",
+            headers=headers,
+            params={"organization_id": org_id},
+        )
+        time.sleep(0.15)
+        if not resp.ok:
+            continue
+        body = resp.json()
+        if body.get("code", 0) != 0:
+            continue
+        detail = body.get("composite_item", {})
+        cf_item_type = get_cf_item_type(detail)
         if cf_item_type in PRODUCTION_TYPES:
             production_items.append({
                 "composite_item_id": item["composite_item_id"],
@@ -121,7 +114,7 @@ def main():
                 "cf_item_type": cf_item_type,
             })
 
-    print(f"  {len(all_composite_items)} composite items total, {len(production_items)} are production items (Finished / Subassembly)")
+    print(f"  {len(production_items)} are production items (Finished Product / Subassembly)")
 
     fp_in_production = []
     fp_completed = []
