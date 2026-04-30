@@ -4,6 +4,7 @@ import requests
 from datetime import datetime, timezone
 
 ZOHO_TOKEN_URL = "https://accounts.zoho.com/oauth/v2/token"
+ZOHO_ITEMS_URL = "https://www.zohoapis.com/inventory/v1/items"
 ZOHO_COMPOSITE_ITEMS_URL = "https://www.zohoapis.com/inventory/v1/compositeitems"
 ZOHO_BUNDLES_URL = "https://www.zohoapis.com/inventory/v1/bundles"
 
@@ -79,6 +80,20 @@ def main():
     month_str = now.strftime("%Y-%m")
     month_prefix = now.strftime("%Y-%m-")
 
+    print("Fetching items (for cf_item_type map)...")
+    all_items = fetch_all_pages(
+        ZOHO_ITEMS_URL,
+        headers,
+        {"organization_id": org_id},
+        "items",
+    )
+    item_type_map = {
+        str(item["item_id"]): get_cf_item_type(item)
+        for item in all_items
+        if item.get("item_id")
+    }
+    print(f"  Built type map for {len(item_type_map)} items")
+
     print("Fetching composite items...")
     all_composite_items = fetch_all_pages(
         ZOHO_COMPOSITE_ITEMS_URL,
@@ -87,11 +102,9 @@ def main():
         "composite_items",
     )
 
-    print(f"  DEBUG first item custom_fields: {all_composite_items[0].get('custom_fields') if all_composite_items else 'N/A'}")
-
     production_items = []
     for item in all_composite_items:
-        cf_item_type = get_cf_item_type(item)
+        cf_item_type = item_type_map.get(str(item.get("composite_item_id", "")))
         if cf_item_type in PRODUCTION_TYPES:
             production_items.append({
                 "composite_item_id": item["composite_item_id"],
