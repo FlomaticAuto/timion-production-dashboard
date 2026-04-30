@@ -142,32 +142,41 @@
       line-height: 1.2;
     }
 
-    /* ── Section ── */
-    .section {
-      margin-bottom: 24px;
+    /* ── Tab toggle ── */
+    .tab-bar {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
     }
 
-    .section-header {
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 8px 12px;
-      border-left: 3px solid;
-      margin-bottom: 10px;
+    .tab-btn {
+      flex: 1;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      background: var(--bg-alt);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
     }
 
-    .section-header.in-production {
-      border-color: var(--accent-amber);
+    .tab-btn:first-child { border-right: 1px solid var(--border); }
+
+    .tab-btn.active-ip {
       background: var(--accent-amber-bg);
       color: var(--accent-amber);
     }
 
-    .section-header.completed {
-      border-color: var(--accent-green);
+    .tab-btn.active-done {
       background: var(--accent-green-bg);
       color: var(--accent-green);
     }
+
+    .tab-panel { display: none; }
+    .tab-panel.visible { display: block; }
 
     /* ── Cards ── */
     .card {
@@ -274,42 +283,59 @@
       if (!records || records.length === 0) {
         return `<p class="empty-state">No records for this period</p>`;
       }
-      return records.map(r => `
-        <div class="card">
-          <div class="card-title">${esc(r.item_name)}</div>
-          <div class="card-meta">
-            <span data-label="Order">${esc(r.assembly_number)}</span>
-            <span data-label="Qty">${esc(String(r.quantity))}</span>
-            <span data-label="Date">${esc(formatDate(r.date))}</span>
+      return records.map(r => {
+        const staff = (r.production_staff || []).join(", ") || "—";
+        return `
+          <div class="card">
+            <div class="card-title">${esc(r.item_name)}</div>
+            <div class="card-meta">
+              <span data-label="Order">${esc(r.assembly_number)}</span>
+              <span data-label="Qty">${esc(String(r.quantity))}</span>
+              <span data-label="Date">${esc(formatDate(r.date))}</span>
+              <span data-label="Staff">${esc(staff)}</span>
+            </div>
           </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
-    function renderColumn(label, group) {
+    function renderColumn(label, group, colId) {
       const ipCount = group.in_production.length;
       const doneCount = group.completed.length;
       return `
         <div>
           <div class="column-header">${label}</div>
           <div class="summary-row">
-            <div class="summary-chip">
-              <strong>${ipCount}</strong>In Production
-            </div>
-            <div class="summary-chip">
-              <strong>${doneCount}</strong>Assembly Completed
-            </div>
+            <div class="summary-chip"><strong>${ipCount}</strong>In Production</div>
+            <div class="summary-chip"><strong>${doneCount}</strong>Assembly Completed</div>
           </div>
-          <div class="section">
-            <div class="section-header in-production">In Production</div>
-            ${renderCards(group.in_production)}
+          <div class="tab-bar">
+            <button class="tab-btn active-ip" data-col="${colId}" data-tab="ip">
+              In Production (${ipCount})
+            </button>
+            <button class="tab-btn" data-col="${colId}" data-tab="done">
+              Assembly Completed (${doneCount})
+            </button>
           </div>
-          <div class="section">
-            <div class="section-header completed">Assembly Completed</div>
-            ${renderCards(group.completed)}
-          </div>
+          <div class="tab-panel visible" id="${colId}-ip">${renderCards(group.in_production)}</div>
+          <div class="tab-panel" id="${colId}-done">${renderCards(group.completed)}</div>
         </div>
       `;
+    }
+
+    function setupToggles() {
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const col = btn.dataset.col;
+          const tab = btn.dataset.tab;
+          document.querySelectorAll(`.tab-btn[data-col="${col}"]`).forEach(b => {
+            b.classList.remove("active-ip", "active-done");
+          });
+          btn.classList.add(tab === "ip" ? "active-ip" : "active-done");
+          document.getElementById(`${col}-ip`).classList.toggle("visible", tab === "ip");
+          document.getElementById(`${col}-done`).classList.toggle("visible", tab === "done");
+        });
+      });
     }
 
     function renderDashboard(data) {
@@ -317,10 +343,11 @@
       const main = document.getElementById("main-content");
       main.innerHTML = `
         <div class="columns">
-          ${renderColumn("Finished Products", data.finished_products)}
-          ${renderColumn("Subassemblies", data.subassemblies)}
+          ${renderColumn("Finished Products", data.finished_products, "fp")}
+          ${renderColumn("Subassemblies", data.subassemblies, "sa")}
         </div>
       `;
+      setupToggles();
     }
 
     function renderError(msg) {
