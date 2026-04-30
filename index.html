@@ -145,34 +145,40 @@
     /* ── Tab toggle ── */
     .tab-bar {
       display: flex;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
+      gap: 8px;
       margin-bottom: 16px;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 7px 12px;
+      padding: 10px 14px;
       font-size: 12px;
-      font-weight: 500;
-      border: none;
-      background: var(--bg-alt);
+      font-weight: 600;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
       color: var(--text-muted);
       cursor: pointer;
-      transition: background 0.1s, color 0.1s;
+      letter-spacing: 0.02em;
+      transition: all 0.15s;
     }
 
-    .tab-btn:first-child { border-right: 1px solid var(--border); }
+    .tab-btn:hover:not(.active-ip):not(.active-done) {
+      border-color: #bbb;
+      color: var(--text);
+      background: var(--bg-alt);
+    }
 
     .tab-btn.active-ip {
-      background: var(--accent-amber-bg);
-      color: var(--accent-amber);
+      background: var(--accent-amber);
+      border-color: var(--accent-amber);
+      color: #fff;
     }
 
     .tab-btn.active-done {
-      background: var(--accent-green-bg);
-      color: var(--accent-green);
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: #fff;
     }
 
     .tab-panel { display: none; }
