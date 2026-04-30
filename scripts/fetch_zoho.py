@@ -160,9 +160,6 @@ def main():
                 detail_body = detail_resp.json()
                 if detail_body.get("code", 0) == 0:
                     bundle_detail = detail_body.get("bundle", {})
-                    if not hasattr(main, "_bundle_debug_done"):
-                        print(f"  DEBUG bundle detail custom_fields: {bundle_detail.get('custom_fields')}")
-                        main._bundle_debug_done = True
 
             production_staff = normalise_multiselect(
                 get_custom_field(bundle_detail, "cf_production_staff")
