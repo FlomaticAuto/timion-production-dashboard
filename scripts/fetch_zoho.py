@@ -87,6 +87,8 @@ def main():
         "composite_items",
     )
 
+    print(f"  DEBUG first item custom_fields: {all_composite_items[0].get('custom_fields') if all_composite_items else 'N/A'}")
+
     production_items = []
     for item in all_composite_items:
         cf_item_type = get_cf_item_type(item)
