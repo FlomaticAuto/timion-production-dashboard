@@ -80,15 +80,11 @@ def main():
     month_prefix = now.strftime("%Y-%m-")
 
     print("Fetching composite items...")
-    # Debug: print top-level keys from first response to find the correct data key
-    _probe = requests.get(ZOHO_COMPOSITE_ITEMS_URL, headers=headers,
-                          params={"organization_id": org_id, "per_page": 1})
-    print(f"  DEBUG composite items response keys: {list(_probe.json().keys())}")
     all_composite_items = fetch_all_pages(
         ZOHO_COMPOSITE_ITEMS_URL,
         headers,
         {"organization_id": org_id},
-        "compositeitems",
+        "composite_items",
     )
 
     production_items = []
