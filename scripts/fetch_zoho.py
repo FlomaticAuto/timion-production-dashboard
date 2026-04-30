@@ -160,15 +160,11 @@ def main():
                 detail_body = detail_resp.json()
                 if detail_body.get("code", 0) == 0:
                     bundle_detail = detail_body.get("bundle", {})
-                    if not hasattr(main, "_bundle_keys_debug_done"):
-                        print(f"  DEBUG bundle detail keys: {list(bundle_detail.keys())}")
-                        serial_candidates = {k: v for k, v in bundle_detail.items() if "serial" in k.lower()}
-                        print(f"  DEBUG serial-related fields: {serial_candidates}")
-                        main._bundle_keys_debug_done = True
 
             production_staff = normalise_multiselect(
                 get_custom_field(bundle_detail, "cf_production_staff")
             )
+            serial_numbers = bundle_detail.get("finished_product_serial_numbers") or []
 
             record = {
                 "assembly_number": bundle.get("reference_number", ""),
@@ -176,6 +172,7 @@ def main():
                 "quantity": bundle.get("quantity_to_bundle", 0),
                 "date": bundle.get("date", ""),
                 "production_staff": production_staff,
+                "serial_numbers": serial_numbers,
             }
 
             is_completed = bundle.get("status") == "bundled"

@@ -285,6 +285,7 @@
       }
       return records.map(r => {
         const staff = (r.production_staff || []).join(", ") || "—";
+        const serials = (r.serial_numbers || []).join(", ") || "—";
         return `
           <div class="card">
             <div class="card-title">${esc(r.item_name)}</div>
@@ -293,6 +294,7 @@
               <span data-label="Qty">${esc(String(r.quantity))}</span>
               <span data-label="Date">${esc(formatDate(r.date))}</span>
               <span data-label="Staff">${esc(staff)}</span>
+              <span data-label="Serials">${esc(serials)}</span>
             </div>
           </div>
         `;
