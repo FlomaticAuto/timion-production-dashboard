@@ -5,6 +5,11 @@ on:
     # Every 30 minutes, 06:00–15:30 UTC (08:00–17:30 SAST), Mon–Fri
     - cron: '0,30 6-15 * * 1-5'
   workflow_dispatch:
+    inputs:
+      month:
+        description: 'Backfill month (YYYY-MM). Leave empty for current month.'
+        required: false
+        default: ''
 
 jobs:
   sync:
@@ -30,7 +35,12 @@ jobs:
           ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
           ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
           ZOHO_ORG_ID: ${{ secrets.ZOHO_ORG_ID }}
-        run: python scripts/fetch_zoho.py
+        run: |
+          if [ -n "${{ github.event.inputs.month }}" ]; then
+            python scripts/fetch_zoho.py --month "${{ github.event.inputs.month }}"
+          else
+            python scripts/fetch_zoho.py
+          fi
 
       - name: Commit and push if data changed
         run: |

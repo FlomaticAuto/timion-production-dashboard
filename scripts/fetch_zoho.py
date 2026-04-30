@@ -1,3 +1,4 @@
+import argparse
 import os
 import json
 import time
@@ -80,6 +81,11 @@ def update_index(index_file, month_str):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--month", metavar="YYYY-MM",
+                        help="Month to fetch. Defaults to current month.")
+    args = parser.parse_args()
+
     client_id = os.environ["ZOHO_CLIENT_ID"]
     client_secret = os.environ["ZOHO_CLIENT_SECRET"]
     refresh_token = os.environ["ZOHO_REFRESH_TOKEN"]
@@ -90,8 +96,12 @@ def main():
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
     now = datetime.now(timezone.utc)
-    month_str = now.strftime("%Y-%m")
-    month_prefix = now.strftime("%Y-%m-")
+    if args.month:
+        month_str = args.month
+    else:
+        month_str = now.strftime("%Y-%m")
+    month_prefix = f"{month_str}-"
+    print(f"Target month: {month_str}")
 
     print("Fetching composite items list...")
     all_composite_items = fetch_all_pages(
