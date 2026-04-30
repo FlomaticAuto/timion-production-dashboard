@@ -121,6 +121,7 @@ def main():
     sa_in_production = []
     sa_completed = []
 
+    debug_bundle_printed = False
     print(f"Fetching bundles for {len(production_items)} items (filtering to {month_str})...")
     for i, item in enumerate(production_items, 1):
         bundles = fetch_all_pages(
@@ -134,6 +135,10 @@ def main():
 
         if month_bundles:
             print(f"  [{i}/{len(production_items)}] {item['name']}: {len(month_bundles)} bundle(s) this month")
+            if not debug_bundle_printed:
+                print(f"  DEBUG first bundle fields: {list(month_bundles[0].keys())}")
+                print(f"  DEBUG first bundle: {month_bundles[0]}")
+                debug_bundle_printed = True
 
         for bundle in month_bundles:
             record = {
