@@ -121,7 +121,6 @@ def main():
     sa_in_production = []
     sa_completed = []
 
-    debug_bundle_printed = False
     print(f"Fetching bundles for {len(production_items)} items (filtering to {month_str})...")
     for i, item in enumerate(production_items, 1):
         bundles = fetch_all_pages(
@@ -135,24 +134,16 @@ def main():
 
         if month_bundles:
             print(f"  [{i}/{len(production_items)}] {item['name']}: {len(month_bundles)} bundle(s) this month")
-            if not debug_bundle_printed:
-                print(f"  DEBUG first bundle fields: {list(month_bundles[0].keys())}")
-                print(f"  DEBUG first bundle: {month_bundles[0]}")
-                debug_bundle_printed = True
 
         for bundle in month_bundles:
             record = {
-                "assembly_number": (
-                    bundle.get("bundle_number")
-                    or bundle.get("reference_number")
-                    or ""
-                ),
+                "assembly_number": bundle.get("reference_number", ""),
                 "item_name": item["name"],
                 "quantity": bundle.get("quantity_to_bundle", 0),
                 "date": bundle.get("date", ""),
             }
 
-            is_completed = bundle.get("is_completed", False)
+            is_completed = bundle.get("status") == "assembled"
 
             if item["cf_item_type"] == "Finished Product / Sales Product":
                 if is_completed:
