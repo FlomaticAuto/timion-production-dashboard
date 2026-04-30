@@ -10,6 +10,7 @@ ZOHO_COMPOSITE_ITEMS_URL = "https://www.zohoapis.com/inventory/v1/compositeitems
 ZOHO_BUNDLES_URL = "https://www.zohoapis.com/inventory/v1/bundles"
 
 PRODUCTION_TYPES = {"Finished Product / Sales Product", "Subassembly"}
+ITEM_TYPE_CACHE_FILE = "data/item_type_cache.json"
 
 
 def get_access_token(client_id, client_secret, refresh_token):
@@ -66,6 +67,25 @@ def normalise_multiselect(value):
     return [s.strip() for s in str(value).split(",") if s.strip()]
 
 
+def load_item_type_cache(today_str):
+    if not os.path.exists(ITEM_TYPE_CACHE_FILE):
+        return {}
+    try:
+        with open(ITEM_TYPE_CACHE_FILE) as f:
+            data = json.load(f)
+        if data.get("date") == today_str:
+            print(f"  Using today's cached item type map ({len(data['map'])} entries)")
+            return data["map"]
+    except Exception:
+        pass
+    return {}
+
+
+def save_item_type_cache(type_map, today_str):
+    with open(ITEM_TYPE_CACHE_FILE, "w") as f:
+        json.dump({"date": today_str, "map": type_map}, f)
+
+
 def update_index(index_file, month_str):
     if os.path.exists(index_file):
         with open(index_file) as f:
@@ -96,10 +116,9 @@ def main():
     headers = {"Authorization": f"Zoho-oauthtoken {access_token}"}
 
     now = datetime.now(timezone.utc)
-    if args.month:
-        month_str = args.month
-    else:
-        month_str = now.strftime("%Y-%m")
+    today_str = now.strftime("%Y-%m-%d")
+    now_month_str = now.strftime("%Y-%m")
+    month_str = args.month or now_month_str
     month_prefix = f"{month_str}-"
     print(f"Target month: {month_str}")
 
@@ -112,24 +131,31 @@ def main():
     )
     print(f"  {len(all_composite_items)} composite items found")
 
-    print("Fetching composite item details to read cf_item_type (custom fields only available in detail endpoint)...")
+    print("Building item type map (cache where available, API for new/missing)...")
+    type_cache = load_item_type_cache(today_str)
     production_items = []
+    new_entries = 0
     for i, item in enumerate(all_composite_items, 1):
         if i % 100 == 0:
-            print(f"  {i}/{len(all_composite_items)} details fetched...")
-        resp = requests.get(
-            f"{ZOHO_COMPOSITE_ITEMS_URL}/{item['composite_item_id']}",
-            headers=headers,
-            params={"organization_id": org_id},
-        )
-        time.sleep(0.15)
-        if not resp.ok:
-            continue
-        body = resp.json()
-        if body.get("code", 0) != 0:
-            continue
-        detail = body.get("composite_item", {})
-        cf_item_type = get_cf_item_type(detail)
+            print(f"  {i}/{len(all_composite_items)} processed...")
+        item_id = str(item["composite_item_id"])
+        if item_id in type_cache:
+            cf_item_type = type_cache[item_id]
+        else:
+            resp = requests.get(
+                f"{ZOHO_COMPOSITE_ITEMS_URL}/{item_id}",
+                headers=headers,
+                params={"organization_id": org_id},
+            )
+            time.sleep(0.15)
+            cf_item_type = None
+            if resp.ok:
+                body = resp.json()
+                if body.get("code", 0) == 0:
+                    cf_item_type = get_cf_item_type(body.get("composite_item", {}))
+            type_cache[item_id] = cf_item_type
+            new_entries += 1
+
         if cf_item_type in PRODUCTION_TYPES:
             production_items.append({
                 "composite_item_id": item["composite_item_id"],
@@ -137,6 +163,9 @@ def main():
                 "cf_item_type": cf_item_type,
             })
 
+    if new_entries > 0:
+        save_item_type_cache(type_cache, today_str)
+        print(f"  Cache updated with {new_entries} new entries")
     print(f"  {len(production_items)} are production items (Finished Product / Subassembly)")
 
     fp_in_production = []
@@ -222,9 +251,12 @@ def main():
         json.dump(output, f, indent=2)
     print(f"\nWrote {month_file}")
 
-    with open("data/latest.json", "w") as f:
-        json.dump(output, f, indent=2)
-    print("Wrote data/latest.json")
+    if month_str == now_month_str:
+        with open("data/latest.json", "w") as f:
+            json.dump(output, f, indent=2)
+        print("Wrote data/latest.json")
+    else:
+        print(f"Skipping latest.json update (backfill run for {month_str})")
 
     months = update_index("data/index.json", month_str)
     print(f"Wrote data/index.json — available months: {months}")
