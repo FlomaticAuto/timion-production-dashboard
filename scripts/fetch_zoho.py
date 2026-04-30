@@ -93,6 +93,9 @@ def main():
         if item.get("item_id")
     }
     print(f"  Built type map for {len(item_type_map)} items")
+    sample_item = next((i for i in all_items if str(i.get("item_id")) == "6010567000011049337"), None)
+    if sample_item:
+        print(f"  DEBUG sample item custom_fields: {sample_item.get('custom_fields')}")
 
     print("Fetching composite items...")
     all_composite_items = fetch_all_pages(
