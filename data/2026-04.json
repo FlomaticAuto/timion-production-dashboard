@@ -1,8 +1,14 @@
 {
-  "generated_at": "2026-04-30T11:07:20Z",
+  "generated_at": "2026-04-30T11:37:32Z",
   "month": "2026-04",
   "finished_products": {
     "in_production": [
+      {
+        "assembly_number": "ASSY-00135",
+        "item_name": "Comp test (composite)",
+        "quantity": 1.0,
+        "date": "2026-04-30"
+      },
       {
         "assembly_number": "ASSY-00131",
         "item_name": "Reverse Rollator (CNC) Small",
