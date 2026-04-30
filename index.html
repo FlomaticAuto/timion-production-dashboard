@@ -548,6 +548,15 @@
       const totalQty = stats.reduce((s, m) => s + m.fpQty + m.saQty, 0);
       const current = stats[stats.length - 1] || {};
 
+      const cutoff90 = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+      let rolling90Count = 0, rolling90Qty = 0;
+      stats.forEach(m => m.allDone.forEach(r => {
+        if (r.date && new Date(r.date) >= cutoff90) {
+          rolling90Count++;
+          rolling90Qty += r.quantity || 0;
+        }
+      }));
+
       const itemMap = {};
       stats.forEach(m => m.allDone.forEach(r => {
         const k = r.item_name || "Unknown";
@@ -562,7 +571,7 @@
       }));
       const staffList = Object.entries(staffMap).sort((a, b) => b[1] - a[1]);
 
-      return { stats, totalCount, totalQty, current, topItems, staffList };
+      return { stats, totalCount, totalQty, current, topItems, staffList, rolling90Count, rolling90Qty };
     }
 
     function renderAnalytics(a) {
@@ -622,9 +631,9 @@
               <div class="kpi-sub">As of last sync</div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-value">${a.topItems.length}</div>
-              <div class="kpi-label">Unique Items</div>
-              <div class="kpi-sub">Assembled across all months</div>
+              <div class="kpi-value">${a.rolling90Count}</div>
+              <div class="kpi-label">Completed (Last 90 Days)</div>
+              <div class="kpi-sub">${a.rolling90Qty} units produced</div>
             </div>
           </div>
         </div>
