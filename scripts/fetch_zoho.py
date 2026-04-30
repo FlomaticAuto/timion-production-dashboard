@@ -45,11 +45,24 @@ def fetch_all_pages(url, headers, params, data_key):
     return results
 
 
-def get_cf_item_type(item):
-    for cf in item.get("custom_fields", []):
-        if cf.get("api_name") == "cf_item_type":
+def get_custom_field(item, api_name):
+    for cf in item.get("custom_fields") or []:
+        if cf.get("api_name") == api_name:
             return cf.get("value")
     return None
+
+
+def get_cf_item_type(item):
+    return get_custom_field(item, "cf_item_type")
+
+
+def normalise_multiselect(value):
+    """Return a list regardless of whether Zoho gives a string, list, or None."""
+    if not value:
+        return []
+    if isinstance(value, list):
+        return [str(v) for v in value if v]
+    return [s.strip() for s in str(value).split(",") if s.strip()]
 
 
 def update_index(index_file, month_str):
@@ -136,11 +149,31 @@ def main():
             print(f"  [{i}/{len(production_items)}] {item['name']}: {len(month_bundles)} bundle(s) this month")
 
         for bundle in month_bundles:
+            # Fetch bundle detail to get custom fields (not in list response)
+            detail_resp = requests.get(
+                f"{ZOHO_BUNDLES_URL}/{bundle['bundle_id']}",
+                headers=headers,
+                params={"organization_id": org_id},
+            )
+            bundle_detail = {}
+            if detail_resp.ok:
+                detail_body = detail_resp.json()
+                if detail_body.get("code", 0) == 0:
+                    bundle_detail = detail_body.get("bundle", {})
+                    if not hasattr(main, "_bundle_debug_done"):
+                        print(f"  DEBUG bundle detail custom_fields: {bundle_detail.get('custom_fields')}")
+                        main._bundle_debug_done = True
+
+            production_staff = normalise_multiselect(
+                get_custom_field(bundle_detail, "cf_production_staff")
+            )
+
             record = {
                 "assembly_number": bundle.get("reference_number", ""),
                 "item_name": item["name"],
                 "quantity": bundle.get("quantity_to_bundle", 0),
                 "date": bundle.get("date", ""),
+                "production_staff": production_staff,
             }
 
             is_completed = bundle.get("status") == "bundled"
