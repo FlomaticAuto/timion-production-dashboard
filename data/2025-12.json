@@ -1,0 +1,323 @@
+{
+  "generated_at": "2026-05-01T09:23:13Z",
+  "month": "2025-12",
+  "finished_products": {
+    "in_production": [],
+    "completed": [
+      {
+        "assembly_number": "128-12-CC-171125",
+        "item_name": "Corner Chair (CNC)",
+        "quantity": 12.0,
+        "date": "2025-12-10",
+        "production_staff": [],
+        "serial_numbers": [
+          "CC374",
+          "CC375",
+          "CC376",
+          "CC377",
+          "CC378",
+          "CC379",
+          "CC380",
+          "CC381",
+          "CC382",
+          "CC383",
+          "CC384",
+          "CC385"
+        ]
+      },
+      {
+        "assembly_number": "148-1-SL-180-121225",
+        "item_name": "Sidelyer 180",
+        "quantity": 1.0,
+        "date": "2025-12-12",
+        "production_staff": [],
+        "serial_numbers": [
+          "L026"
+        ]
+      },
+      {
+        "assembly_number": "ASSY-00012",
+        "item_name": "Soft splint M",
+        "quantity": 2.0,
+        "date": "2025-12-05",
+        "production_staff": [
+          "Siya"
+        ],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "149-2-SP-M-121225",
+        "item_name": "Soft splint M",
+        "quantity": 2.0,
+        "date": "2025-12-08",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "207-1-SFA-120226",
+        "item_name": "Standing frame - Adult CNC",
+        "quantity": 1.0,
+        "date": "2025-12-02",
+        "production_staff": [
+          "Oswald"
+        ],
+        "serial_numbers": [
+          "AS398"
+        ]
+      },
+      {
+        "assembly_number": "135-20-SF-M-111125",
+        "item_name": "Standing frame medium",
+        "quantity": 20.0,
+        "date": "2025-12-03",
+        "production_staff": [],
+        "serial_numbers": [
+          "SF266",
+          "SF267",
+          "SF268",
+          "SF269",
+          "SF270",
+          "SF271",
+          "SF272",
+          "SF273",
+          "SF274",
+          "SF275",
+          "SF276",
+          "SF277",
+          "SF278",
+          "SF279",
+          "SF280",
+          "SF281",
+          "SF282",
+          "SF283",
+          "SF284",
+          "SF285"
+        ]
+      },
+      {
+        "assembly_number": "179-1-SFSC-280126",
+        "item_name": "Standing frame small",
+        "quantity": 1.0,
+        "date": "2025-12-01",
+        "production_staff": [],
+        "serial_numbers": [
+          "SF317"
+        ]
+      },
+      {
+        "assembly_number": "177-1-SFSC-280126",
+        "item_name": "Standing frame small",
+        "quantity": 1.0,
+        "date": "2025-12-08",
+        "production_staff": [],
+        "serial_numbers": [
+          "SF306"
+        ]
+      },
+      {
+        "assembly_number": "139-20-SF-S-041225",
+        "item_name": "Standing frame small",
+        "quantity": 20.0,
+        "date": "2025-12-04",
+        "production_staff": [],
+        "serial_numbers": [
+          "SF318",
+          "SF319",
+          "SF320",
+          "SF321",
+          "SF322",
+          "SF323",
+          "SF324",
+          "SF325",
+          "SF326",
+          "SF327",
+          "SF328",
+          "SF329",
+          "SF330",
+          "SF331",
+          "SF332",
+          "SF333",
+          "SF334",
+          "SF335",
+          "SF336",
+          "SF337"
+        ]
+      },
+      {
+        "assembly_number": "254-1-VTVB-051225",
+        "item_name": "Visual toys (Vision Box)",
+        "quantity": 1.0,
+        "date": "2025-12-05",
+        "production_staff": [
+          "Siya"
+        ],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "253-1-VTVB-051225",
+        "item_name": "Visual toys (Vision Box)",
+        "quantity": 1.0,
+        "date": "2025-12-05",
+        "production_staff": [
+          "Siya"
+        ],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "10-WTW-3040-041225-016",
+        "item_name": "Wheelchair Tray 30cm(40) Wood",
+        "quantity": 10.0,
+        "date": "2025-12-04",
+        "production_staff": [],
+        "serial_numbers": []
+      }
+    ]
+  },
+  "subassemblies": {
+    "in_production": [],
+    "completed": [
+      {
+        "assembly_number": "138-12-CC-CNC-041225",
+        "item_name": "Corner Chair (CNC cut only)",
+        "quantity": 12.0,
+        "date": "2025-12-04",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "141-12-KM6BLACK-081225",
+        "item_name": "Knob M6 Black (excl. bolt)",
+        "quantity": 12.0,
+        "date": "2025-12-10",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "140-27-KM6BLUE-081225",
+        "item_name": "Knob M6 Blue (excl. bolt)",
+        "quantity": 27.0,
+        "date": "2025-12-10",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "142-12-KM6X50BLACK-081225",
+        "item_name": "Knob M6 x 50 Black",
+        "quantity": 12.0,
+        "date": "2025-12-10",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "146-480-SFLZ-101225",
+        "item_name": "Lozenge Standing Frame (CNC cut only)",
+        "quantity": 480.0,
+        "date": "2025-12-10",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "143-6-PCCM-091225",
+        "item_name": "Positioning chair cushion cover set medium",
+        "quantity": 6.0,
+        "date": "2025-12-09",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "144-3-PCCS-091225",
+        "item_name": "Positioning chair cushion cover set small",
+        "quantity": 3.0,
+        "date": "2025-12-09",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "ASSY-00072",
+        "item_name": "Sidelyer 150cm complete cushions (Covers & Foam)",
+        "quantity": 1.0,
+        "date": "2025-12-01",
+        "production_staff": [
+          "Siya"
+        ],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "274-1-SLCF-160-050126",
+        "item_name": "Sidelyer 160cm complete cushions (Covers & Foam)",
+        "quantity": 1.0,
+        "date": "2025-12-31",
+        "production_staff": [
+          "Siya"
+        ],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "245-1-SLCF-180-151225",
+        "item_name": "Sidelyer 180cm complete cushions (Covers & Foam)",
+        "quantity": 1.0,
+        "date": "2025-12-12",
+        "production_staff": [
+          "Siya"
+        ],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "147-1-SLCF-180-121225",
+        "item_name": "Sidelyer 180cm complete cushions (Covers & Foam)",
+        "quantity": 1.0,
+        "date": "2025-12-12",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "134-10-SFS-021225",
+        "item_name": "Standing Frame Cushions Cover Set",
+        "quantity": 10.0,
+        "date": "2025-12-03",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "145-244-SFTA-101225",
+        "item_name": "Table Angle Standing Frame (CNC cut only)",
+        "quantity": 244.0,
+        "date": "2025-12-10",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "10-WTW-3040-CNC-041225-006",
+        "item_name": "Wheelchair Tray 30cm(40) Wood (CNC cut only)",
+        "quantity": 10.0,
+        "date": "2025-12-04",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "156-500-WTS-031125",
+        "item_name": "Wheelchair Tray Table Strap",
+        "quantity": 500.0,
+        "date": "2025-12-12",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "150-102-WTS-131225",
+        "item_name": "Wheelchair Tray Table Strap",
+        "quantity": 102.0,
+        "date": "2025-12-15",
+        "production_staff": [],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "137-227-WTS-031225",
+        "item_name": "Wheelchair Tray Table Strap",
+        "quantity": 228.0,
+        "date": "2025-12-03",
+        "production_staff": [],
+        "serial_numbers": []
+      }
+    ]
+  }
+}
