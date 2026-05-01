@@ -104,11 +104,17 @@
       cursor: default;
     }
 
-    .month-label {
-      font-size: 15px;
+    .nav-select {
+      height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
       font-weight: 500;
-      min-width: 120px;
-      text-align: center;
+      padding: 0 6px;
+      cursor: pointer;
+      font-family: var(--font);
     }
 
     /* ── Layout ── */
@@ -229,6 +235,30 @@
       content: attr(data-label) ": ";
       font-weight: 500;
       color: var(--text);
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    .status-badge.draft {
+      background: #f0f0f0;
+      color: #666;
+      border: 1px solid #ddd;
+    }
+
+    .status-badge.confirmed {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber);
+      border: 1px solid #f0c070;
     }
 
     /* ── States ── */
@@ -365,7 +395,8 @@
 
   <nav class="month-nav">
     <button id="btn-prev" title="Previous month">&#8592;</button>
-    <span class="month-label" id="month-label">—</span>
+    <select id="sel-month" class="nav-select"></select>
+    <select id="sel-year" class="nav-select"></select>
     <button id="btn-next" title="Next month">&#8594;</button>
   </nav>
 
@@ -413,9 +444,14 @@
       return records.map(r => {
         const staff = (r.production_staff || []).join(", ") || "—";
         const serials = (r.serial_numbers || []).join(", ") || "—";
+        const badge = r.status === "draft"
+          ? `<span class="status-badge draft">Draft</span>`
+          : r.status === "confirmed"
+            ? `<span class="status-badge confirmed">Confirmed</span>`
+            : "";
         return `
           <div class="card">
-            <div class="card-title">${esc(r.item_name)}</div>
+            <div class="card-title">${esc(r.item_name)}${badge}</div>
             <div class="card-meta">
               <span data-label="Order">${esc(r.assembly_number)}</span>
               <span data-label="Qty">${esc(String(r.quantity))}</span>
@@ -495,8 +531,25 @@
     }
 
     function updateNav() {
-      const label = availableMonths[currentIndex];
-      document.getElementById("month-label").textContent = label ? formatMonth(label) : "—";
+      const ym = availableMonths[currentIndex];
+      if (!ym) return;
+      const [year] = ym.split("-");
+
+      const years = [...new Set(availableMonths.map(m => m.split("-")[0]))];
+      const monthsForYear = availableMonths.filter(m => m.startsWith(year + "-"));
+
+      const selYear = document.getElementById("sel-year");
+      const selMonth = document.getElementById("sel-month");
+
+      selYear.innerHTML = years.map(y =>
+        `<option value="${y}"${y === year ? " selected" : ""}>${y}</option>`
+      ).join("");
+
+      selMonth.innerHTML = monthsForYear.map(m => {
+        const [, mm] = m.split("-");
+        return `<option value="${m}"${m === ym ? " selected" : ""}>${MONTH_NAMES[parseInt(mm, 10) - 1]}</option>`;
+      }).join("");
+
       document.getElementById("btn-prev").disabled = currentIndex >= availableMonths.length - 1;
       document.getElementById("btn-next").disabled = currentIndex <= 0;
     }
@@ -743,6 +796,25 @@
         currentIndex--;
         updateNav();
         loadMonth(availableMonths[currentIndex]);
+      }
+    });
+
+    document.getElementById("sel-year").addEventListener("change", e => {
+      const yr = e.target.value;
+      const match = availableMonths.find(m => m.startsWith(yr + "-"));
+      if (match) {
+        currentIndex = availableMonths.indexOf(match);
+        updateNav();
+        if (currentView === "monthly") loadMonth(availableMonths[currentIndex]);
+      }
+    });
+
+    document.getElementById("sel-month").addEventListener("change", e => {
+      const idx = availableMonths.indexOf(e.target.value);
+      if (idx >= 0) {
+        currentIndex = idx;
+        updateNav();
+        if (currentView === "monthly") loadMonth(availableMonths[currentIndex]);
       }
     });
 

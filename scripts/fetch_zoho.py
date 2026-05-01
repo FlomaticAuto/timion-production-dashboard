@@ -210,6 +210,7 @@ def main():
                 "item_name": item["name"],
                 "quantity": bundle.get("quantity_to_bundle", 0),
                 "date": bundle.get("date", ""),
+                "status": bundle.get("status", ""),
                 "production_staff": production_staff,
                 "serial_numbers": serial_numbers,
             }
