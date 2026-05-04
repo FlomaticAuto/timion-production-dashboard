@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-01T18:16:13Z",
+  "generated_at": "2026-05-04T16:15:49Z",
   "month": "2026-05",
   "finished_products": {
     "in_production": [],
@@ -7,6 +7,29 @@
   },
   "subassemblies": {
     "in_production": [],
-    "completed": []
+    "completed": [
+      {
+        "assembly_number": "ASSY-00137",
+        "item_name": "Height Adjustment Footplate (Med/Large)",
+        "quantity": 5.0,
+        "date": "2026-05-04",
+        "status": "bundled",
+        "production_staff": [
+          "Oswald"
+        ],
+        "serial_numbers": []
+      },
+      {
+        "assembly_number": "ASSY-00136",
+        "item_name": "Height Adjustment Footplate (Med/Large) (CNC cut only)",
+        "quantity": 15.0,
+        "date": "2026-05-04",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": []
+      }
+    ]
   }
 }
