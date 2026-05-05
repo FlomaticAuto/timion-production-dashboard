@@ -1,9 +1,42 @@
 {
-  "generated_at": "2026-05-05T12:15:44Z",
+  "generated_at": "2026-05-05T20:03:41Z",
   "month": "2026-05",
   "finished_products": {
     "in_production": [],
-    "completed": []
+    "completed": [
+      {
+        "assembly_number": "ASSY-00141",
+        "item_name": "Standing frame medium",
+        "quantity": 20.0,
+        "date": "2026-05-05",
+        "status": "bundled",
+        "production_staff": [
+          "Oswald"
+        ],
+        "serial_numbers": [
+          "SF422",
+          "SF423",
+          "SF424",
+          "SF425",
+          "SF426",
+          "SF427",
+          "SF428",
+          "SF429",
+          "SF430",
+          "SF431",
+          "SF432",
+          "SF433",
+          "SF434",
+          "SF435",
+          "SF436",
+          "SF437",
+          "SF438",
+          "SF439",
+          "SF440",
+          "SF441"
+        ]
+      }
+    ]
   },
   "subassemblies": {
     "in_production": [],
