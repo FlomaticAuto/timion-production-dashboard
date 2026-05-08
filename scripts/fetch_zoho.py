@@ -148,8 +148,6 @@ def fetch_bundles_for_months(months, production_items, headers, org_id):
         m: {"fp_in_production": [], "fp_completed": [], "sa_in_production": [], "sa_completed": []}
         for m in months
     }
-    logged_keys = False
-
     for i, item in enumerate(production_items, 1):
         bundles = fetch_all_pages(
             ZOHO_BUNDLES_URL,
@@ -186,11 +184,6 @@ def fetch_bundles_for_months(months, production_items, headers, org_id):
                 if body.get("code", 0) == 0:
                     bundle_detail = body.get("bundle", {})
 
-            # Log all available keys on the first bundle to aid completion-date discovery
-            if not logged_keys and bundle_detail:
-                print(f"  [debug] bundle_detail keys: {sorted(bundle_detail.keys())}")
-                logged_keys = True
-
             production_staff = normalise_multiselect(
                 get_custom_field(bundle_detail, "cf_production_staff")
             )
@@ -198,13 +191,7 @@ def fetch_bundles_for_months(months, production_items, headers, org_id):
 
             is_completed = bundle.get("status") == "bundled"
 
-            # Try known candidate fields for completion date; expand once debug keys are known
-            completed_date = (
-                bundle_detail.get("bundled_date") or
-                bundle_detail.get("assembled_date") or
-                bundle_detail.get("last_modified_time") or
-                ""
-            )
+            completed_date = bundle_detail.get("last_modified_time", "")
 
             record = {
                 "assembly_number": bundle.get("reference_number", ""),
