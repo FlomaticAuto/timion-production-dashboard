@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-07T16:20:43Z",
+  "generated_at": "2026-05-08T08:03:21Z",
   "month": "2026-05",
   "finished_products": {
     "in_production": [],
@@ -34,7 +34,8 @@
           "SF439",
           "SF440",
           "SF441"
-        ]
+        ],
+        "completed_date": "2026-05-06T09:54:05+0200"
       }
     ]
   },
@@ -50,7 +51,8 @@
         "production_staff": [
           "Oswald"
         ],
-        "serial_numbers": []
+        "serial_numbers": [],
+        "completed_date": "2026-05-06T14:32:44+0200"
       },
       {
         "assembly_number": "ASSY-00136",
@@ -61,7 +63,8 @@
         "production_staff": [
           "Wian/CNC Team"
         ],
-        "serial_numbers": []
+        "serial_numbers": [],
+        "completed_date": "2026-05-06T10:37:26+0200"
       }
     ]
   }

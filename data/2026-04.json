@@ -1,35 +1,8 @@
 {
-  "generated_at": "2026-05-01T10:09:35Z",
+  "generated_at": "2026-05-08T08:03:21Z",
   "month": "2026-04",
   "finished_products": {
     "in_production": [
-      {
-        "assembly_number": "ASSY-00135",
-        "item_name": "Comp test (composite)",
-        "quantity": 1.0,
-        "date": "2026-04-30",
-        "status": "confirmed",
-        "production_staff": [
-          "Oswald"
-        ],
-        "serial_numbers": []
-      },
-      {
-        "assembly_number": "ASSY-00131",
-        "item_name": "Reverse Rollator (CNC) Small",
-        "quantity": 4.0,
-        "date": "2026-04-09",
-        "status": "draft",
-        "production_staff": [
-          "JJ"
-        ],
-        "serial_numbers": [
-          "RR472",
-          "RR473",
-          "RR474",
-          "RR475"
-        ]
-      },
       {
         "assembly_number": "ASSY-00132",
         "item_name": "Toilet bench L 33-46cm CNC",
@@ -71,36 +44,62 @@
           "SF419",
           "SF420",
           "SF421"
-        ]
+        ],
+        "completed_date": "2026-05-06T09:54:05+0200"
+      },
+      {
+        "assembly_number": "ASSY-00156",
+        "item_name": "Tactile toys",
+        "quantity": 1.0,
+        "date": "2026-04-15",
+        "status": "bundled",
+        "production_staff": [
+          "Siya"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-06T11:07:43+0200"
       }
     ]
   },
   "subassemblies": {
-    "in_production": [
+    "in_production": [],
+    "completed": [
+      {
+        "assembly_number": "ASSY-00160",
+        "item_name": "Knob M6 Black (excl. bolt)",
+        "quantity": 2.0,
+        "date": "2026-04-15",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-06T12:55:33+0200"
+      },
+      {
+        "assembly_number": "ASSY-00161",
+        "item_name": "Knob M6 x 50 Black",
+        "quantity": 2.0,
+        "date": "2026-04-15",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-06T14:25:13+0200"
+      },
       {
         "assembly_number": "ASSY-00133",
         "item_name": "Standing Frame Cushions",
         "quantity": 20.0,
         "date": "2026-04-14",
-        "status": "draft",
+        "status": "bundled",
         "production_staff": [
           "Oswald"
         ],
-        "serial_numbers": []
+        "serial_numbers": [],
+        "completed_date": "2026-05-04T12:12:37+0200"
       },
-      {
-        "assembly_number": "ASSY-00129",
-        "item_name": "Standing Frame Cushions Cover Set",
-        "quantity": 10.0,
-        "date": "2026-04-09",
-        "status": "draft",
-        "production_staff": [
-          "Naomi"
-        ],
-        "serial_numbers": []
-      }
-    ],
-    "completed": [
       {
         "assembly_number": "ASSY-00125",
         "item_name": "Standing Frame Cushions",
@@ -110,7 +109,20 @@
         "production_staff": [
           "Qhamani"
         ],
-        "serial_numbers": []
+        "serial_numbers": [],
+        "completed_date": "2026-05-04T12:12:37+0200"
+      },
+      {
+        "assembly_number": "ASSY-00129",
+        "item_name": "Standing Frame Cushions Cover Set",
+        "quantity": 10.0,
+        "date": "2026-04-09",
+        "status": "bundled",
+        "production_staff": [
+          "Naomi"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-06T09:51:53+0200"
       },
       {
         "assembly_number": "ASSY-00126",
@@ -121,7 +133,20 @@
         "production_staff": [
           "Qhamani"
         ],
-        "serial_numbers": []
+        "serial_numbers": [],
+        "completed_date": "2026-05-06T09:51:53+0200"
+      },
+      {
+        "assembly_number": "ASSY-00139",
+        "item_name": "Tilt Table knee strap",
+        "quantity": 8.0,
+        "date": "2026-04-06",
+        "status": "bundled",
+        "production_staff": [
+          "Lucas"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-04T15:53:01+0200"
       }
     ]
   }
