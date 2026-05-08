@@ -3,22 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Production Dashboard</title>
+  <title>Production Dashboard — Timion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      --bg: #ffffff;
-      --bg-alt: #f5f5f5;
-      --bg-card: #fafafa;
-      --border: #e0e0e0;
-      --text: #1a1a1a;
-      --text-muted: #6b6b6b;
-      --accent-amber: #c97a1a;
-      --accent-green: #2e7d52;
-      --accent-amber-bg: #fef9f0;
-      --accent-green-bg: #f0faf4;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+      --bg:        #F0F4F8;
+      --bg-card:   #FFFFFF;
+      --bg-alt:    #EEF2F7;
+      --border:    #E2E8F0;
+      --border-md: #CBD5E1;
+
+      --text:        #1A202C;
+      --text-muted:  #64748B;
+      --text-subtle: #94A3B8;
+
+      --brand:        #5BAAD6;
+      --brand-dark:   #3D8EC0;
+      --brand-bg:     #EBF5FB;
+      --brand-border: #B3D9EF;
+
+      --amber:        #D97706;
+      --amber-bg:     #FFFBEB;
+      --amber-border: #FDE68A;
+
+      --green:        #059669;
+      --green-bg:     #ECFDF5;
+      --green-border: #6EE7B7;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow:    0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.05);
     }
 
     body {
@@ -27,76 +47,130 @@
       color: var(--text);
       font-size: 14px;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── Header ── */
     .site-header {
-      background: var(--bg);
+      background: var(--bg-card);
       border-bottom: 1px solid var(--border);
-      padding: 16px 24px;
+      padding: 0 28px;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: var(--shadow-sm);
     }
 
-    .header-left { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-
-    .view-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
-
-    .view-btn {
-      padding: 7px 20px;
-      font-size: 13px;
-      font-weight: 500;
-      border: none;
-      background: var(--bg-alt);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background 0.1s, color 0.1s;
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
-    .view-btn:first-child { border-right: 1px solid var(--border); }
-    .view-btn.active { background: var(--text); color: var(--bg); }
+    .site-logo {
+      height: 46px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .header-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
 
     .site-header h1 {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.2;
     }
 
     .last-synced {
-      font-size: 12px;
-      color: var(--text-muted);
+      font-size: 11px;
+      color: var(--text-subtle);
+      font-weight: 400;
     }
 
-    /* ── Month navigation ── */
-    .month-nav {
+    /* ── View toggle ── */
+    .view-toggle {
+      display: flex;
       background: var(--bg-alt);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .view-btn {
+      padding: 7px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      letter-spacing: -0.01em;
+    }
+
+    .view-btn:hover:not(.active) {
+      color: var(--text);
+      background: rgba(255,255,255,0.7);
+    }
+
+    .view-btn.active {
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 1px 4px rgba(91,170,214,0.45);
+    }
+
+    /* ── Month nav ── */
+    .month-nav {
+      background: var(--bg-card);
       border-bottom: 1px solid var(--border);
-      padding: 10px 24px;
+      padding: 0 28px;
+      height: 52px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .month-nav button {
-      background: var(--bg);
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      width: 30px;
-      height: 30px;
-      font-size: 16px;
+      border-radius: 7px;
+      width: 32px;
+      height: 32px;
+      font-size: 15px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text);
-      transition: background 0.1s;
+      color: var(--text-muted);
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
     }
 
     .month-nav button:hover:not(:disabled) {
-      background: var(--border);
+      background: var(--brand-bg);
+      border-color: var(--brand-border);
+      color: var(--brand-dark);
     }
 
     .month-nav button:disabled {
@@ -105,66 +179,82 @@
     }
 
     .nav-select {
-      height: 30px;
+      height: 32px;
       border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg);
+      border-radius: 7px;
+      background: var(--bg-card);
       color: var(--text);
-      font-size: 14px;
-      font-weight: 500;
-      padding: 0 6px;
-      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
       font-family: var(--font);
+      padding: 0 10px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.12s, box-shadow 0.12s;
+    }
+
+    .nav-select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(91,170,214,0.18);
     }
 
     /* ── Layout ── */
     .main {
-      padding: 24px;
+      padding: 28px;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
     .columns {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: 28px;
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 760px) {
       .columns { grid-template-columns: 1fr; }
       .main { padding: 16px; }
-      .site-header { padding: 12px 16px; }
-      .month-nav { padding: 10px 16px; }
+      .site-header { padding: 0 16px; height: auto; min-height: 68px; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
+      .month-nav { padding: 0 16px; }
     }
 
     /* ── Column ── */
     .column-header {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--border);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--brand);
+      color: var(--text);
     }
 
     .summary-row {
       display: flex;
-      gap: 16px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     .summary-chip {
-      background: var(--bg-alt);
+      flex: 1;
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 6px 12px;
-      font-size: 12px;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 500;
       color: var(--text-muted);
+      box-shadow: var(--shadow-sm);
     }
 
     .summary-chip strong {
       display: block;
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
       color: var(--text);
-      line-height: 1.2;
+      line-height: 1.1;
+      margin-bottom: 2px;
     }
 
     /* ── Tab toggle ── */
@@ -179,31 +269,32 @@
       padding: 10px 14px;
       font-size: 12px;
       font-weight: 600;
-      border: 2px solid var(--border);
-      border-radius: 6px;
-      background: var(--bg);
+      font-family: var(--font);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-card);
       color: var(--text-muted);
       cursor: pointer;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
       transition: all 0.15s;
     }
 
     .tab-btn:hover:not(.active-ip):not(.active-done) {
-      border-color: #bbb;
+      border-color: var(--border-md);
       color: var(--text);
       background: var(--bg-alt);
     }
 
     .tab-btn.active-ip {
-      background: var(--accent-amber);
-      border-color: var(--accent-amber);
-      color: #fff;
+      background: var(--amber-bg);
+      border-color: var(--amber-border);
+      color: var(--amber);
     }
 
     .tab-btn.active-done {
-      background: var(--accent-green);
-      border-color: var(--accent-green);
-      color: #fff;
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green);
     }
 
     .tab-panel { display: none; }
@@ -213,74 +304,93 @@
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.15s, border-color 0.15s, transform 0.12s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--brand-border);
+      transform: translateY(-1px);
     }
 
     .card-title {
-      font-weight: 500;
+      font-weight: 600;
       font-size: 13px;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .card-meta {
       display: flex;
-      gap: 16px;
+      flex-wrap: wrap;
+      gap: 6px 18px;
       font-size: 12px;
-      color: var(--text-muted);
+      color: var(--text);
     }
 
     .card-meta span::before {
       content: attr(data-label) ": ";
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .status-badge {
-      display: inline-block;
       font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.04em;
+      color: var(--text-subtle);
       text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 3px;
-      vertical-align: middle;
-      margin-left: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Status badges ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
     }
 
     .status-badge.draft {
-      background: #f0f0f0;
-      color: #666;
-      border: 1px solid #ddd;
+      background: var(--bg-alt);
+      color: var(--text-muted);
+      border: 1px solid var(--border-md);
     }
 
     .status-badge.confirmed {
-      background: var(--accent-amber-bg);
-      color: var(--accent-amber);
-      border: 1px solid #f0c070;
+      background: var(--brand-bg);
+      color: var(--brand-dark);
+      border: 1px solid var(--brand-border);
     }
 
     /* ── States ── */
     .empty-state {
       font-size: 13px;
-      color: var(--text-muted);
-      padding: 12px 0 4px;
+      color: var(--text-subtle);
+      padding: 20px 0 8px;
+      text-align: center;
     }
 
     .loading-overlay {
       text-align: center;
-      padding: 48px 24px;
+      padding: 72px 24px;
       color: var(--text-muted);
       font-size: 14px;
     }
 
     .error-message {
-      background: #fff5f5;
-      border: 1px solid #fca5a5;
-      border-radius: 4px;
-      padding: 14px 16px;
-      color: #b91c1c;
+      background: #FFF5F5;
+      border: 1px solid #FCA5A5;
+      border-radius: 10px;
+      padding: 16px 18px;
+      color: #B91C1C;
       font-size: 13px;
       margin: 24px;
     }
@@ -290,7 +400,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
 
     @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
@@ -298,94 +408,100 @@
     .kpi-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 18px;
+      border-radius: 12px;
+      padding: 22px 20px;
+      box-shadow: var(--shadow);
     }
 
     .kpi-value {
-      font-size: 36px;
+      font-size: 42px;
       font-weight: 700;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.05em;
       line-height: 1;
       margin-bottom: 6px;
+      color: var(--brand);
     }
 
     .kpi-label {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--text-muted);
     }
 
-    .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .kpi-sub { font-size: 11px; color: var(--text-subtle); margin-top: 4px; }
 
-    .a-section { margin-bottom: 30px; }
+    .a-section { margin-bottom: 32px; }
 
     .a-title {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--text-muted);
-      margin-bottom: 14px;
-      padding-bottom: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .a-legend { font-size: 11px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+    .a-legend { font-size: 11px; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--text-muted); }
 
-    .a-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .a-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
     @media (max-width: 720px) { .a-columns { grid-template-columns: 1fr; } }
 
     .bar-chart { display: flex; flex-direction: column; gap: 10px; }
 
     .bar-row {
       display: grid;
-      grid-template-columns: 110px 1fr 32px;
+      grid-template-columns: 120px 1fr 36px;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .bar-label { font-size: 12px; color: var(--text-muted); text-align: right; white-space: nowrap; }
+    .bar-label { font-size: 12px; color: var(--text-muted); text-align: right; white-space: nowrap; font-weight: 500; }
 
     .bar-track {
       background: var(--bg-alt);
-      border-radius: 3px;
-      height: 22px;
+      border-radius: 6px;
+      height: 24px;
       overflow: hidden;
       display: flex;
       gap: 1px;
     }
 
-    .bar-fp { background: var(--accent-amber); height: 100%; transition: width 0.4s ease; }
-    .bar-sa { background: var(--accent-green); height: 100%; transition: width 0.4s ease; }
-    .bar-total { font-size: 12px; font-weight: 600; color: var(--text); text-align: right; }
+    .bar-fp { background: var(--brand); height: 100%; transition: width 0.5s ease; }
+    .bar-sa { background: var(--green); height: 100%; transition: width 0.5s ease; }
+    .bar-total { font-size: 12px; font-weight: 700; color: var(--text); text-align: right; }
 
     .rank-list { display: flex; flex-direction: column; gap: 10px; }
 
     .rank-row {
       display: grid;
-      grid-template-columns: 18px 1fr 70px 30px;
+      grid-template-columns: 20px 1fr 80px 36px;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .rank-num { font-size: 11px; color: var(--text-muted); text-align: right; }
-    .rank-name { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .rank-bar { height: 6px; border-radius: 3px; min-width: 2px; }
-    .rank-val { font-size: 12px; font-weight: 600; text-align: right; }
+    .rank-num { font-size: 11px; color: var(--text-subtle); text-align: right; font-weight: 600; }
+    .rank-name { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    .rank-bar { height: 6px; border-radius: 4px; min-width: 3px; }
+    .rank-val { font-size: 12px; font-weight: 700; text-align: right; color: var(--text); }
   </style>
 </head>
 <body>
 
   <header class="site-header">
     <div class="header-left">
-      <h1>Production Dashboard</h1>
-      <span class="last-synced" id="last-synced"></span>
+      <img src="Timion%20logo%20official.png" alt="Timion" class="site-logo">
+      <div class="header-divider"></div>
+      <div class="header-title-group">
+        <h1>Production Dashboard</h1>
+        <span class="last-synced" id="last-synced"></span>
+      </div>
     </div>
     <div class="view-toggle">
       <button class="view-btn active" id="btn-view-monthly">Monthly</button>
@@ -429,14 +545,12 @@
 
     function formatCompletedDate(val) {
       if (!val) return null;
-      // Try parsing as ISO or date-like string
       try {
         const d = new Date(val);
         if (!isNaN(d)) {
           return `${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
         }
       } catch (_) {}
-      // Fallback: extract YYYY-MM-DD prefix
       const m = String(val).match(/^(\d{4})-(\d{2})-(\d{2})/);
       if (m) return `${parseInt(m[3])} ${MONTH_NAMES[parseInt(m[2]) - 1]} ${m[1]}`;
       return String(val);
@@ -477,7 +591,7 @@
               ${completedSpan}
               <span data-label="Staff">${esc(staff)}</span>
             </div>
-            <div class="card-meta" style="margin-top:4px;">
+            <div class="card-meta" style="margin-top:6px;">
               <span data-label="Serials">${esc(serials)}</span>
             </div>
           </div>
@@ -671,7 +785,7 @@
         <div class="rank-row">
           <span class="rank-num">${i + 1}</span>
           <span class="rank-name" title="${esc(name)}">${esc(name)}</span>
-          <div class="rank-bar" style="width:${(qty/maxItemQty*100).toFixed(1)}%;background:var(--accent-amber)"></div>
+          <div class="rank-bar" style="width:${(qty/maxItemQty*100).toFixed(1)}%;background:var(--brand)"></div>
           <span class="rank-val">${qty}</span>
         </div>`).join("") || `<p class="empty-state">No completed assemblies yet</p>`;
 
@@ -680,7 +794,7 @@
         <div class="rank-row">
           <span class="rank-num">${i + 1}</span>
           <span class="rank-name" title="${esc(name)}">${esc(name)}</span>
-          <div class="rank-bar" style="width:${(count/maxStaff*100).toFixed(1)}%;background:var(--accent-green)"></div>
+          <div class="rank-bar" style="width:${(count/maxStaff*100).toFixed(1)}%;background:var(--green)"></div>
           <span class="rank-val">${count}</span>
         </div>`).join("") || `<p class="empty-state">No staff data available</p>`;
 
@@ -713,8 +827,8 @@
           <div class="a-title">
             Assemblies Completed per Month
             <span class="a-legend">
-              <span style="color:var(--accent-amber)">■</span> Finished Products &nbsp;
-              <span style="color:var(--accent-green)">■</span> Subassemblies
+              <span style="color:var(--brand)">■</span> Finished Products &nbsp;
+              <span style="color:var(--green)">■</span> Subassemblies
             </span>
           </div>
           <div class="bar-chart">${bars || '<p class="empty-state">No data</p>'}</div>
@@ -754,7 +868,6 @@
     }
 
     async function init() {
-      // Load available months index
       try {
         const resp = await fetch(`data/index.json?_=${Date.now()}`);
         if (resp.ok) {
@@ -764,18 +877,15 @@
         availableMonths = [];
       }
 
-      // Load latest data
       try {
         const resp = await fetch(`data/latest.json?_=${Date.now()}`);
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
 
-        // Sync currentIndex to the month in latest.json
         const monthInData = data.month;
         const idx = availableMonths.indexOf(monthInData);
         currentIndex = idx >= 0 ? idx : 0;
 
-        // If index was empty, populate with at least this month
         if (availableMonths.length === 0 && monthInData) {
           availableMonths = [monthInData];
         }
@@ -784,7 +894,6 @@
         renderDashboard(data);
       } catch (e) {
         updateNav();
-        // No latest.json yet — show empty state message
         if (availableMonths.length === 0) {
           document.getElementById("main-content").innerHTML =
             `<div class="error-message">No data available yet. Run the GitHub Action manually to generate the first data files.</div>`;
