@@ -11,6 +11,7 @@ ZOHO_BUNDLES_URL = "https://www.zohoapis.com/inventory/v1/bundles"
 
 PRODUCTION_TYPES = {"Finished Product / Sales Product", "Subassembly"}
 ITEM_TYPE_CACHE_FILE = "data/item_type_cache.json"
+LOOKBACK_MONTHS = 3  # re-process previous months with open items up to this many months back
 
 
 def get_access_token(client_id, client_secret, refresh_token):
@@ -100,6 +101,133 @@ def update_index(index_file, month_str):
     return months
 
 
+def get_months_to_reprocess(index_file, current_month):
+    """Return previous months within LOOKBACK_MONTHS that have open in_production records."""
+    if not os.path.exists(index_file):
+        return []
+    try:
+        with open(index_file) as f:
+            months = json.load(f)
+    except Exception:
+        return []
+
+    cur_year, cur_mon = map(int, current_month.split("-"))
+    reprocess = []
+    for m in months:
+        if m >= current_month:
+            continue
+        m_year, m_mon = map(int, m.split("-"))
+        months_ago = (cur_year - m_year) * 12 + (cur_mon - m_mon)
+        if months_ago > LOOKBACK_MONTHS:
+            continue
+        data_file = f"data/{m}.json"
+        if not os.path.exists(data_file):
+            continue
+        try:
+            with open(data_file) as f:
+                data = json.load(f)
+        except Exception:
+            continue
+        has_open = (
+            bool(data.get("finished_products", {}).get("in_production")) or
+            bool(data.get("subassemblies", {}).get("in_production"))
+        )
+        if has_open:
+            reprocess.append(m)
+    return reprocess
+
+
+def fetch_bundles_for_months(months, production_items, headers, org_id):
+    """
+    Single pass over all production items. Classifies each bundle into whichever
+    target month it belongs to (by date prefix). Only makes detail API calls for
+    bundles that match a target month.
+    """
+    month_prefixes = {m: f"{m}-" for m in months}
+    results = {
+        m: {"fp_in_production": [], "fp_completed": [], "sa_in_production": [], "sa_completed": []}
+        for m in months
+    }
+    logged_keys = False
+
+    for i, item in enumerate(production_items, 1):
+        bundles = fetch_all_pages(
+            ZOHO_BUNDLES_URL,
+            headers,
+            {"organization_id": org_id, "composite_item_id": item["composite_item_id"]},
+            "bundles",
+        )
+
+        # Match each bundle to a target month
+        relevant = []
+        for b in bundles:
+            bdate = b.get("date", "")
+            for m, prefix in month_prefixes.items():
+                if bdate.startswith(prefix):
+                    relevant.append((m, b))
+                    break
+
+        if relevant:
+            by_month = {}
+            for m, _ in relevant:
+                by_month[m] = by_month.get(m, 0) + 1
+            parts = ", ".join(f"{m}: {c}" for m, c in sorted(by_month.items()))
+            print(f"  [{i}/{len(production_items)}] {item['name']}: {parts}")
+
+        for target_month, bundle in relevant:
+            detail_resp = requests.get(
+                f"{ZOHO_BUNDLES_URL}/{bundle['bundle_id']}",
+                headers=headers,
+                params={"organization_id": org_id},
+            )
+            bundle_detail = {}
+            if detail_resp.ok:
+                body = detail_resp.json()
+                if body.get("code", 0) == 0:
+                    bundle_detail = body.get("bundle", {})
+
+            # Log all available keys on the first bundle to aid completion-date discovery
+            if not logged_keys and bundle_detail:
+                print(f"  [debug] bundle_detail keys: {sorted(bundle_detail.keys())}")
+                logged_keys = True
+
+            production_staff = normalise_multiselect(
+                get_custom_field(bundle_detail, "cf_production_staff")
+            )
+            serial_numbers = bundle_detail.get("finished_product_serial_numbers") or []
+
+            is_completed = bundle.get("status") == "bundled"
+
+            # Try known candidate fields for completion date; expand once debug keys are known
+            completed_date = (
+                bundle_detail.get("bundled_date") or
+                bundle_detail.get("assembled_date") or
+                bundle_detail.get("last_modified_time") or
+                ""
+            )
+
+            record = {
+                "assembly_number": bundle.get("reference_number", ""),
+                "item_name": item["name"],
+                "quantity": bundle.get("quantity_to_bundle", 0),
+                "date": bundle.get("date", ""),
+                "status": bundle.get("status", ""),
+                "production_staff": production_staff,
+                "serial_numbers": serial_numbers,
+            }
+            if is_completed and completed_date:
+                record["completed_date"] = completed_date
+
+            bucket = results[target_month]
+            is_fp = item["cf_item_type"] == "Finished Product / Sales Product"
+            if is_fp:
+                (bucket["fp_completed"] if is_completed else bucket["fp_in_production"]).append(record)
+            else:
+                (bucket["sa_completed"] if is_completed else bucket["sa_in_production"]).append(record)
+
+    return results
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--month", metavar="YYYY-MM",
@@ -119,7 +247,6 @@ def main():
     today_str = now.strftime("%Y-%m-%d")
     now_month_str = now.strftime("%Y-%m")
     month_str = args.month or now_month_str
-    month_prefix = f"{month_str}-"
     print(f"Target month: {month_str}")
 
     print("Fetching composite items list...")
@@ -168,99 +295,50 @@ def main():
         print(f"  Cache updated with {new_entries} new entries")
     print(f"  {len(production_items)} are production items (Finished Product / Subassembly)")
 
-    fp_in_production = []
-    fp_completed = []
-    sa_in_production = []
-    sa_completed = []
+    # Determine all months to process in this run
+    prev_months = get_months_to_reprocess("data/index.json", month_str)
+    all_months = [month_str] + prev_months
+    if prev_months:
+        print(f"Re-processing open months: {prev_months}")
 
-    print(f"Fetching bundles for {len(production_items)} items (filtering to {month_str})...")
-    for i, item in enumerate(production_items, 1):
-        bundles = fetch_all_pages(
-            ZOHO_BUNDLES_URL,
-            headers,
-            {"organization_id": org_id, "composite_item_id": item["composite_item_id"]},
-            "bundles",
-        )
-
-        month_bundles = [b for b in bundles if b.get("date", "").startswith(month_prefix)]
-
-        if month_bundles:
-            print(f"  [{i}/{len(production_items)}] {item['name']}: {len(month_bundles)} bundle(s) this month")
-
-        for bundle in month_bundles:
-            # Fetch bundle detail to get custom fields (not in list response)
-            detail_resp = requests.get(
-                f"{ZOHO_BUNDLES_URL}/{bundle['bundle_id']}",
-                headers=headers,
-                params={"organization_id": org_id},
-            )
-            bundle_detail = {}
-            if detail_resp.ok:
-                detail_body = detail_resp.json()
-                if detail_body.get("code", 0) == 0:
-                    bundle_detail = detail_body.get("bundle", {})
-
-            production_staff = normalise_multiselect(
-                get_custom_field(bundle_detail, "cf_production_staff")
-            )
-            serial_numbers = bundle_detail.get("finished_product_serial_numbers") or []
-
-            record = {
-                "assembly_number": bundle.get("reference_number", ""),
-                "item_name": item["name"],
-                "quantity": bundle.get("quantity_to_bundle", 0),
-                "date": bundle.get("date", ""),
-                "status": bundle.get("status", ""),
-                "production_staff": production_staff,
-                "serial_numbers": serial_numbers,
-            }
-
-            is_completed = bundle.get("status") == "bundled"
-
-            if item["cf_item_type"] == "Finished Product / Sales Product":
-                if is_completed:
-                    fp_completed.append(record)
-                else:
-                    fp_in_production.append(record)
-            else:
-                if is_completed:
-                    sa_completed.append(record)
-                else:
-                    sa_in_production.append(record)
-
-    print(f"\nResults for {month_str}:")
-    print(f"  Finished Products  — In Production: {len(fp_in_production)}, Completed: {len(fp_completed)}")
-    print(f"  Subassemblies      — In Production: {len(sa_in_production)}, Completed: {len(sa_completed)}")
-
-    output = {
-        "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "month": month_str,
-        "finished_products": {
-            "in_production": fp_in_production,
-            "completed": fp_completed,
-        },
-        "subassemblies": {
-            "in_production": sa_in_production,
-            "completed": sa_completed,
-        },
-    }
+    print(f"Fetching bundles for {len(production_items)} items across {len(all_months)} month(s)...")
+    month_results = fetch_bundles_for_months(all_months, production_items, headers, org_id)
 
     os.makedirs("data", exist_ok=True)
 
-    month_file = f"data/{month_str}.json"
-    with open(month_file, "w") as f:
-        json.dump(output, f, indent=2)
-    print(f"\nWrote {month_file}")
+    for m in all_months:
+        r = month_results[m]
+        print(f"\nResults for {m}:")
+        print(f"  Finished Products  — In Production: {len(r['fp_in_production'])}, Completed: {len(r['fp_completed'])}")
+        print(f"  Subassemblies      — In Production: {len(r['sa_in_production'])}, Completed: {len(r['sa_completed'])}")
 
-    if month_str == now_month_str:
-        with open("data/latest.json", "w") as f:
+        output = {
+            "generated_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "month": m,
+            "finished_products": {
+                "in_production": r["fp_in_production"],
+                "completed": r["fp_completed"],
+            },
+            "subassemblies": {
+                "in_production": r["sa_in_production"],
+                "completed": r["sa_completed"],
+            },
+        }
+
+        month_file = f"data/{m}.json"
+        with open(month_file, "w") as f:
             json.dump(output, f, indent=2)
-        print("Wrote data/latest.json")
-    else:
-        print(f"Skipping latest.json update (backfill run for {month_str})")
+        print(f"Wrote {month_file}")
+
+        if m == now_month_str:
+            with open("data/latest.json", "w") as f:
+                json.dump(output, f, indent=2)
+            print("Wrote data/latest.json")
+        else:
+            print(f"Skipping latest.json (re-processed {m})")
 
     months = update_index("data/index.json", month_str)
-    print(f"Wrote data/index.json — available months: {months}")
+    print(f"\nWrote data/index.json — available months: {months}")
 
 
 if __name__ == "__main__":
