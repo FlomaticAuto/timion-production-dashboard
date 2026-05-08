@@ -476,8 +476,8 @@
     .bar-chart-v {
       display: flex;
       align-items: flex-end;
-      gap: 8px;
-      overflow-x: auto;
+      gap: 12px;
+      overflow: visible;
       padding-bottom: 4px;
     }
 
@@ -487,6 +487,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      cursor: pointer;
     }
 
     .bar-group-total {
@@ -499,25 +500,30 @@
       justify-content: center;
     }
 
-    .bar-group-bars {
+    .bar-group-track {
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      gap: 3px;
       width: 100%;
       height: 180px;
+      position: relative;
     }
 
-    .bar-v {
-      flex: 1;
-      max-width: 26px;
+    .bar-stack {
+      width: 60%;
+      max-width: 48px;
+      display: flex;
+      flex-direction: column-reverse;
       border-radius: 5px 5px 0 0;
+      overflow: hidden;
+      transition: height 0.5s ease, filter 0.15s;
       min-height: 3px;
-      transition: height 0.5s ease;
     }
 
-    .bar-fp-v { background: var(--brand); }
-    .bar-sa-v { background: var(--green); }
+    .bar-group:hover .bar-stack { filter: brightness(1.1); }
+
+    .bar-fp-seg { background: var(--brand); }
+    .bar-sa-seg { background: var(--green); }
 
     .bar-group-label {
       font-size: 10px;
@@ -526,6 +532,44 @@
       text-align: center;
       margin-top: 8px;
       white-space: nowrap;
+    }
+
+    /* ── Bar tooltip ── */
+    .bar-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1A202C;
+      color: #fff;
+      padding: 9px 13px;
+      border-radius: 8px;
+      font-size: 11px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      line-height: 1.9;
+    }
+
+    .bar-group:hover .bar-tooltip { opacity: 1; }
+
+    .tt-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .tt-total {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin-top: 4px;
+      padding-top: 4px;
+      font-weight: 700;
     }
 
     .rank-list { display: flex; flex-direction: column; gap: 10px; }
@@ -811,27 +855,44 @@
       return { stats, totalCount, totalQty, current, topItems, staffList, rolling90Count, rolling90Qty };
     }
 
+    function buildBarChart(stats, maxVal) {
+      if (!stats.length) return '<p class="empty-state">No data</p>';
+      return stats.map(m => {
+        const total = m.fpCount + m.saCount;
+        const totalPct = maxVal > 0 ? (total / maxVal * 100).toFixed(1) : 0;
+        const [y, mo] = m.month.split("-");
+        const label = `${MONTH_NAMES[parseInt(mo,10)-1].slice(0,3)} '${y.slice(2)}`;
+        return `<div class="bar-group">
+          <div class="bar-group-total">${total > 0 ? total : ""}</div>
+          <div class="bar-group-track">
+            <div class="bar-stack" style="height:${totalPct}%">
+              <div class="bar-fp-seg" style="flex:${Math.max(m.fpCount, 0)}"></div>
+              <div class="bar-sa-seg" style="flex:${Math.max(m.saCount, 0)}"></div>
+            </div>
+            <div class="bar-tooltip">
+              <div><span class="tt-dot" style="background:var(--brand)"></span>Finished Products: <strong>${m.fpCount}</strong></div>
+              <div><span class="tt-dot" style="background:var(--green)"></span>Subassemblies: <strong>${m.saCount}</strong></div>
+              <div class="tt-total">Total: ${total}</div>
+            </div>
+          </div>
+          <div class="bar-group-label">${label}</div>
+        </div>`;
+      }).join("");
+    }
+
     function renderAnalytics(a) {
       const curDone = (a.current.fpCount || 0) + (a.current.saCount || 0);
       const curIP   = a.current.ipCount || 0;
       const curLabel = a.current.label || "—";
 
-      const maxDone = Math.max(...a.stats.map(m => m.fpCount + m.saCount), 1);
-      const bars = a.stats.map(m => {
-        const total = m.fpCount + m.saCount;
-        const fpH = (m.fpCount / maxDone * 100).toFixed(1);
-        const saH = (m.saCount / maxDone * 100).toFixed(1);
-        const [y, mo] = m.month.split("-");
-        const label = `${MONTH_NAMES[parseInt(mo,10)-1].slice(0,3)} '${y.slice(2)}`;
-        return `<div class="bar-group">
-          <div class="bar-group-total">${total > 0 ? total : ""}</div>
-          <div class="bar-group-bars">
-            <div class="bar-v bar-fp-v" style="height:${fpH}%"></div>
-            <div class="bar-v bar-sa-v" style="height:${saH}%"></div>
-          </div>
-          <div class="bar-group-label">${label}</div>
-        </div>`;
-      }).join("");
+      const last6 = a.stats.slice(-6);
+      const maxLast6 = Math.max(...last6.map(m => m.fpCount + m.saCount), 1);
+      const last6Bars = buildBarChart(last6, maxLast6);
+
+      const currentYear = String(new Date().getFullYear());
+      const yearStats = a.stats.filter(s => s.month.startsWith(currentYear));
+      const maxYear = Math.max(...yearStats.map(m => m.fpCount + m.saCount), 1);
+      const yearBars = buildBarChart(yearStats, maxYear);
 
       const maxItemQty = a.topItems.length ? a.topItems[0][1] : 1;
       const itemRows = a.topItems.map(([name, qty], i) => `
@@ -878,13 +939,23 @@
         </div>
         <div class="a-section">
           <div class="a-title">
-            Assemblies Completed per Month
+            Assemblies Completed — Last 6 Months
             <span class="a-legend">
               <span style="color:var(--brand)">■</span> Finished Products &nbsp;
               <span style="color:var(--green)">■</span> Subassemblies
             </span>
           </div>
-          <div class="bar-chart-v">${bars || '<p class="empty-state">No data</p>'}</div>
+          <div class="bar-chart-v">${last6Bars}</div>
+        </div>
+        <div class="a-section">
+          <div class="a-title">
+            Assemblies Completed — ${currentYear}
+            <span class="a-legend">
+              <span style="color:var(--brand)">■</span> Finished Products &nbsp;
+              <span style="color:var(--green)">■</span> Subassemblies
+            </span>
+          </div>
+          <div class="bar-chart-v">${yearBars}</div>
         </div>
         <div class="a-columns">
           <div class="a-section">
