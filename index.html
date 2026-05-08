@@ -53,7 +53,7 @@
     /* ── Header ── */
     .site-header {
       background: var(--bg-card);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid var(--brand);
       padding: 0 28px;
       height: 68px;
       display: flex;
@@ -143,8 +143,8 @@
 
     /* ── Month nav ── */
     .month-nav {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border);
+      background: var(--brand-bg);
+      border-bottom: 1px solid var(--brand-border);
       padding: 0 28px;
       height: 52px;
       display: flex;
@@ -224,10 +224,13 @@
       font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--brand);
-      color: var(--text);
+      padding: 14px 18px;
+      border-radius: 10px;
+      color: #fff;
     }
+
+    .col-fp .column-header { background: linear-gradient(135deg, #5BAAD6 0%, #3A8EC0 100%); }
+    .col-sa .column-header { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
 
     .summary-row {
       display: flex;
@@ -252,10 +255,12 @@
       font-size: 28px;
       font-weight: 700;
       letter-spacing: -0.04em;
-      color: var(--text);
       line-height: 1.1;
       margin-bottom: 2px;
     }
+
+    .summary-chip:first-child strong { color: var(--amber); }
+    .summary-chip:last-child strong  { color: var(--green); }
 
     /* ── Tab toggle ── */
     .tab-bar {
@@ -316,6 +321,11 @@
       border-color: var(--brand-border);
       transform: translateY(-1px);
     }
+
+    [id$="-ip"]   .card { border-left: 3px solid var(--amber-border); }
+    [id$="-done"] .card { border-left: 3px solid var(--green-border); }
+    [id$="-ip"]   .card:hover { border-left-color: var(--amber); border-color: var(--amber-border); }
+    [id$="-done"] .card:hover { border-left-color: var(--green); border-color: var(--green-border); }
 
     .card-title {
       font-weight: 600;
@@ -408,10 +418,16 @@
     .kpi-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
+      border-top-width: 3px;
       border-radius: 12px;
-      padding: 22px 20px;
+      padding: 20px;
       box-shadow: var(--shadow);
     }
+
+    .kpi-card:nth-child(1) { border-top-color: var(--brand); }
+    .kpi-card:nth-child(2) { border-top-color: var(--green); }
+    .kpi-card:nth-child(3) { border-top-color: var(--amber); }
+    .kpi-card:nth-child(4) { border-top-color: var(--brand-dark); }
 
     .kpi-value {
       font-size: 42px;
@@ -421,6 +437,10 @@
       margin-bottom: 6px;
       color: var(--brand);
     }
+
+    .kpi-card:nth-child(2) .kpi-value { color: var(--green); }
+    .kpi-card:nth-child(3) .kpi-value { color: var(--amber); }
+    .kpi-card:nth-child(4) .kpi-value { color: var(--brand-dark); }
 
     .kpi-label {
       font-size: 11px;
@@ -603,7 +623,7 @@
       const ipCount = group.in_production.length;
       const doneCount = group.completed.length;
       return `
-        <div>
+        <div class="col-${colId}">
           <div class="column-header">${label}</div>
           <div class="summary-row">
             <div class="summary-chip"><strong>${ipCount}</strong>In Production</div>
