@@ -606,8 +606,8 @@
 
     .bar-col:hover .bar-stack { filter: brightness(1.2); }
 
-    .bar-fp-seg { background: var(--accent); }
-    .bar-sa-seg { background: var(--green); }
+    .bar-fp-seg { background: linear-gradient(180deg, #5535c8, #2a52a8); }
+    .bar-sa-seg { background: linear-gradient(180deg, #07845a, #045740); }
 
     .chart-x-row {
       display: flex;
@@ -1047,8 +1047,8 @@
             <div class="bar-sa-seg" style="flex:${Math.max(m.saCount, 0)}"></div>
           </div>
           <div class="bar-tooltip">
-            <div><span class="tt-dot" style="background:var(--accent)"></span>Finished Products: <strong>${m.fpCount}</strong></div>
-            <div><span class="tt-dot" style="background:var(--green)"></span>Subassemblies: <strong>${m.saCount}</strong></div>
+            <div><span class="tt-dot" style="background:#5535c8"></span>Finished Products: <strong>${m.fpCount}</strong></div>
+            <div><span class="tt-dot" style="background:#07845a"></span>Subassemblies: <strong>${m.saCount}</strong></div>
             <div class="tt-total">Total: ${total}</div>
           </div>
         </div>`;
