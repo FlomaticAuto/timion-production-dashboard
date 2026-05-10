@@ -14,7 +14,7 @@
       --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --ff-head: 'Sora', 'Inter', sans-serif;
 
-      --bg:       #080810;
+      --bg:       #0a0814;
       --surface:  #12121e;
       --surface2: #1a1a2e;
       --border:        rgba(255,255,255,0.08);
@@ -50,6 +50,9 @@
     body {
       font-family: var(--font);
       background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 70% 45% at 80% 0%, rgba(124,92,252,0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 35% at 10% 100%, rgba(79,142,247,0.10) 0%, transparent 60%);
       color: var(--text);
       font-size: 14px;
       line-height: 1.5;
@@ -68,7 +71,7 @@
       position: absolute;
       border-radius: 50%;
       filter: blur(100px);
-      opacity: 0.13;
+      opacity: 0.22;
     }
 
     /* ── Header ── */
@@ -220,12 +223,16 @@
       font-size: 13px;
       font-weight: 600;
       font-family: var(--font);
-      padding: 0 14px;
+      padding: 0 32px 0 14px;
       cursor: pointer;
       outline: none;
       text-align: center;
       text-align-last: center;
       transition: border-color 0.12s, box-shadow 0.12s;
+    }
+
+    .nav-select option {
+      text-align: center;
     }
 
     .nav-select:focus {
@@ -743,8 +750,9 @@
 <body>
 
   <div class="bg-orbs" aria-hidden="true">
-    <div class="orb" style="width:800px;height:800px;background:#7c5cfc;top:-350px;right:-250px;"></div>
-    <div class="orb" style="width:600px;height:600px;background:#4f8ef7;bottom:-250px;left:-200px;"></div>
+    <div class="orb" style="width:900px;height:900px;background:#7c5cfc;top:-380px;right:-280px;"></div>
+    <div class="orb" style="width:700px;height:700px;background:#4f8ef7;bottom:-300px;left:-220px;"></div>
+    <div class="orb" style="width:500px;height:500px;background:#7c5cfc;top:40%;left:35%;opacity:0.08;"></div>
   </div>
 
   <header class="site-header">
