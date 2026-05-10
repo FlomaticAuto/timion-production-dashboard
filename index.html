@@ -14,7 +14,7 @@
       --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --ff-head: 'Sora', 'Inter', sans-serif;
 
-      --bg:       #0a0814;
+      --bg:       #080810;
       --surface:  #12121e;
       --surface2: #1a1a2e;
       --border:        rgba(255,255,255,0.08);
@@ -50,29 +50,13 @@
     body {
       font-family: var(--font);
       background: var(--bg);
-      background-image:
-        radial-gradient(ellipse 70% 45% at 80% 0%, rgba(124,92,252,0.14) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 35% at 10% 100%, rgba(79,142,247,0.10) 0%, transparent 60%);
       color: var(--text);
       font-size: 14px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Background orbs ── */
-    .bg-orbs {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.22;
-    }
+    .bg-orbs { display: none; }
 
     /* ── Header ── */
     .site-header {
@@ -223,16 +207,10 @@
       font-size: 13px;
       font-weight: 600;
       font-family: var(--font);
-      padding: 0 32px 0 14px;
+      padding: 0 12px;
       cursor: pointer;
       outline: none;
-      text-align: center;
-      text-align-last: center;
       transition: border-color 0.12s, box-shadow 0.12s;
-    }
-
-    .nav-select option {
-      text-align: center;
     }
 
     .nav-select:focus {
@@ -274,8 +252,8 @@
       color: #fff;
     }
 
-    .col-fp .column-header { background: var(--gradient); }
-    .col-sa .column-header { background: linear-gradient(135deg, #10d98a 0%, #059669 100%); }
+    .col-fp .column-header { background: linear-gradient(135deg, #4528b0 0%, #2a52a8 100%); }
+    .col-sa .column-header { background: linear-gradient(135deg, #07845a 0%, #045740 100%); }
 
     .summary-row {
       display: flex;
