@@ -6,12 +6,13 @@
   <title>Production Dashboard — Timion</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --ff-head: 'Sora', 'Inter', sans-serif;
 
       --bg:       #080810;
       --surface:  #12121e;
@@ -121,6 +122,7 @@
     }
 
     .site-header h1 {
+      font-family: var(--ff-head);
       font-size: 16px;
       font-weight: 700;
       letter-spacing: -0.02em;
@@ -210,7 +212,7 @@
     }
 
     .nav-select {
-      height: 32px;
+      height: 36px;
       border: 1px solid var(--border-bright);
       border-radius: 7px;
       background: var(--surface2);
@@ -218,9 +220,11 @@
       font-size: 13px;
       font-weight: 600;
       font-family: var(--font);
-      padding: 0 10px;
+      padding: 0 14px;
       cursor: pointer;
       outline: none;
+      text-align: center;
+      text-align-last: center;
       transition: border-color 0.12s, box-shadow 0.12s;
     }
 
@@ -253,12 +257,13 @@
 
     /* ── Column ── */
     .column-header {
-      font-size: 15px;
+      font-family: var(--ff-head);
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 16px;
       padding: 14px 18px;
-      border-radius: 10px;
+      border-radius: 12px;
       color: #fff;
     }
 
@@ -275,24 +280,35 @@
       flex: 1;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
+      border-radius: 12px;
+      padding: 14px 16px;
       font-size: 11px;
       font-weight: 500;
       color: var(--text-muted);
       box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s;
     }
 
     .summary-chip strong {
       display: block;
-      font-size: 28px;
+      font-family: var(--ff-head);
+      font-size: 30px;
       font-weight: 700;
       letter-spacing: -0.04em;
       line-height: 1.1;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
+    .summary-chip:first-child {
+      background: var(--amber-bg);
+      border-color: var(--amber-border);
+    }
     .summary-chip:first-child strong { color: var(--amber); }
+
+    .summary-chip:last-child {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+    }
     .summary-chip:last-child strong  { color: var(--green); }
 
     /* ── Tab toggle ── */
@@ -304,12 +320,12 @@
 
     .tab-btn {
       flex: 1;
-      padding: 10px 14px;
+      padding: 9px 14px;
       font-size: 12px;
       font-weight: 600;
       font-family: var(--font);
       border: 1.5px solid var(--border);
-      border-radius: 8px;
+      border-radius: 100px;
       background: var(--surface);
       color: var(--text-muted);
       cursor: pointer;
@@ -342,17 +358,18 @@
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 14px 16px;
       margin-bottom: 10px;
       box-shadow: var(--shadow);
       transition: box-shadow 0.15s, border-color 0.15s, transform 0.12s;
+      animation: float-up 0.4s ease both;
     }
 
     .card:hover {
       box-shadow: var(--shadow-md);
       border-color: var(--border-bright);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
 
     [id$="-ip"]   .card { border-left: 3px solid var(--amber-border); }
@@ -361,6 +378,7 @@
     [id$="-done"] .card:hover { border-left-color: var(--green); border-color: rgba(16,217,138,0.2); }
 
     .card-title {
+      font-family: var(--ff-head);
       font-weight: 600;
       font-size: 13px;
       margin-bottom: 8px;
@@ -452,8 +470,8 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-top-width: 3px;
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 14px;
+      padding: 22px;
       box-shadow: var(--shadow);
     }
 
@@ -463,9 +481,10 @@
     .kpi-card:nth-child(4) { border-top-color: var(--accent2); }
 
     .kpi-value {
+      font-family: var(--ff-head);
       font-size: 42px;
       font-weight: 700;
-      letter-spacing: -0.05em;
+      letter-spacing: -0.04em;
       line-height: 1;
       margin-bottom: 6px;
       color: var(--accent);
@@ -477,34 +496,51 @@
 
     .kpi-label {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--text-muted);
+      color: #ffffff;
     }
 
     .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
     .a-section { margin-bottom: 32px; }
 
-    .a-title {
-      font-size: 11px;
+    .a-eyebrow {
+      font-size: 10px;
       font-weight: 700;
+      letter-spacing: 1.8px;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .a-title {
+      font-family: var(--ff-head);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 12px;
     }
 
-    .a-legend { font-size: 11px; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--text-muted); }
+    .section-divider {
+      width: 36px;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--gradient);
+      margin-bottom: 18px;
+    }
 
     .a-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-    @media (max-width: 720px) { .a-columns { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) {
+      .a-columns { grid-template-columns: 1fr; }
+      .charts-row { grid-template-columns: 1fr !important; }
+    }
 
     /* ── Bar charts ── */
     .chart-wrap {
@@ -557,9 +593,9 @@
     .chart-bars-row {
       display: flex;
       align-items: flex-end;
-      gap: 6px;
+      gap: 3px;
       height: 100%;
-      padding: 0 8px;
+      padding: 0 4px;
     }
 
     .bar-col {
@@ -590,8 +626,8 @@
 
     .chart-x-row {
       display: flex;
-      gap: 6px;
-      padding: 7px 8px 0;
+      gap: 3px;
+      padding: 7px 4px 0;
       border-left: 2px solid transparent;
     }
 
@@ -648,15 +684,60 @@
 
     .rank-row {
       display: grid;
-      grid-template-columns: 20px 1fr 80px 36px;
+      grid-template-columns: 26px 1fr 100px 36px;
       align-items: center;
       gap: 10px;
     }
 
+    .rank-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .rank-circle.top {
+      background: rgba(124,92,252,0.15);
+      border-color: rgba(124,92,252,0.4);
+      color: var(--accent);
+    }
+
     .rank-num { font-size: 11px; color: var(--text-muted); text-align: right; font-weight: 600; }
     .rank-name { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; color: var(--text); }
+
+    .rank-bar-track {
+      height: 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+    .rank-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      min-width: 3px;
+    }
+    .rank-bar-fill.green {
+      background: linear-gradient(90deg, var(--green), #059669);
+    }
+
     .rank-bar { height: 6px; border-radius: 4px; min-width: 3px; }
     .rank-val { font-size: 12px; font-weight: 700; text-align: right; color: var(--text); }
+
+    /* ── Entry animation ── */
+    @keyframes float-up {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .a-legend { font-size: 11px; font-weight: 500; color: var(--text-muted); }
   </style>
 </head>
 <body>
@@ -742,7 +823,7 @@
       if (!records || records.length === 0) {
         return `<p class="empty-state">No records for this period</p>`;
       }
-      return records.map(r => {
+      return records.map((r, idx) => {
         const staff = (r.production_staff || []).join(", ") || "—";
         const serials = (r.serial_numbers || []).join(", ") || "—";
         const badge = r.status === "draft"
@@ -754,7 +835,7 @@
           ? `<span data-label="Completed">${esc(formatCompletedDate(r.completed_date))}</span>`
           : "";
         return `
-          <div class="card">
+          <div class="card" style="animation-delay:${(idx * 0.04).toFixed(2)}s">
             <div class="card-title">${esc(r.item_name)}${badge}</div>
             <div class="card-meta">
               <span data-label="Order">${esc(r.assembly_number)}</span>
@@ -1021,23 +1102,24 @@
       const maxItemQty = a.topItems.length ? a.topItems[0][1] : 1;
       const itemRows = a.topItems.map(([name, qty], i) => `
         <div class="rank-row">
-          <span class="rank-num">${i + 1}</span>
+          <span class="rank-circle${i < 3 ? ' top' : ''}">${i + 1}</span>
           <span class="rank-name" title="${esc(name)}">${esc(name)}</span>
-          <div class="rank-bar" style="width:${(qty/maxItemQty*100).toFixed(1)}%;background:var(--accent)"></div>
+          <div class="rank-bar-track"><div class="rank-bar-fill" style="width:${(qty/maxItemQty*100).toFixed(1)}%"></div></div>
           <span class="rank-val">${qty}</span>
         </div>`).join("") || `<p class="empty-state">No completed assemblies yet</p>`;
 
       const maxStaff = a.staffList.length ? a.staffList[0][1] : 1;
       const staffRows = a.staffList.map(([name, count], i) => `
         <div class="rank-row">
-          <span class="rank-num">${i + 1}</span>
+          <span class="rank-circle${i < 3 ? ' top' : ''}">${i + 1}</span>
           <span class="rank-name" title="${esc(name)}">${esc(name)}</span>
-          <div class="rank-bar" style="width:${(count/maxStaff*100).toFixed(1)}%;background:var(--green)"></div>
+          <div class="rank-bar-track"><div class="rank-bar-fill green" style="width:${(count/maxStaff*100).toFixed(1)}%"></div></div>
           <span class="rank-val">${count}</span>
         </div>`).join("") || `<p class="empty-state">No staff data available</p>`;
 
       document.getElementById("main-content").innerHTML = `
         <div class="a-section">
+          <div class="a-eyebrow" style="margin-bottom:16px;">Overview</div>
           <div class="kpi-row">
             <div class="kpi-card">
               <div class="kpi-value">${a.totalCount}</div>
@@ -1061,33 +1143,43 @@
             </div>
           </div>
         </div>
-        <div class="a-section">
-          <div class="a-title">
-            Assemblies Completed — Last 6 Months
-            <span class="a-legend">
-              <span style="color:var(--accent)">■</span> Finished Products &nbsp;
-              <span style="color:var(--green)">■</span> Subassemblies
-            </span>
+        <div class="charts-row" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;">
+          <div class="a-section" style="margin-bottom:0;">
+            <div class="a-eyebrow">Production Trend</div>
+            <div class="a-title">
+              Last 6 Months
+              <span class="a-legend">
+                <span style="color:var(--accent)">■</span> FP &nbsp;
+                <span style="color:var(--green)">■</span> SA
+              </span>
+            </div>
+            <div class="section-divider"></div>
+            ${last6Bars}
           </div>
-          ${last6Bars}
-        </div>
-        <div class="a-section">
-          <div class="a-title">
-            Assemblies Completed — ${currentYear}
-            <span class="a-legend">
-              <span style="color:var(--accent)">■</span> Finished Products &nbsp;
-              <span style="color:var(--green)">■</span> Subassemblies
-            </span>
+          <div class="a-section" style="margin-bottom:0;">
+            <div class="a-eyebrow">Annual Overview</div>
+            <div class="a-title">
+              ${currentYear}
+              <span class="a-legend">
+                <span style="color:var(--accent)">■</span> FP &nbsp;
+                <span style="color:var(--green)">■</span> SA
+              </span>
+            </div>
+            <div class="section-divider"></div>
+            ${yearBars}
           </div>
-          ${yearBars}
         </div>
         <div class="a-columns">
           <div class="a-section">
+            <div class="a-eyebrow">Performance</div>
             <div class="a-title">Top Items by Units Completed</div>
+            <div class="section-divider"></div>
             <div class="rank-list">${itemRows}</div>
           </div>
           <div class="a-section">
+            <div class="a-eyebrow">Team</div>
             <div class="a-title">Production Staff Activity</div>
+            <div class="section-divider"></div>
             <div class="rank-list">${staffRows}</div>
           </div>
         </div>
