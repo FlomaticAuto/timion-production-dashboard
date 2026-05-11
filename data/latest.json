@@ -1,8 +1,22 @@
 {
-  "generated_at": "2026-05-08T16:16:34Z",
+  "generated_at": "2026-05-11T12:12:50Z",
   "month": "2026-05",
   "finished_products": {
-    "in_production": [],
+    "in_production": [
+      {
+        "assembly_number": "ASSY-00165",
+        "item_name": "Standing frame - Adult CNC",
+        "quantity": 1.0,
+        "date": "2026-05-11",
+        "status": "draft",
+        "production_staff": [
+          "JJ"
+        ],
+        "serial_numbers": [
+          "AS490"
+        ]
+      }
+    ],
     "completed": [
       {
         "assembly_number": "ASSY-00141",
@@ -40,7 +54,24 @@
     ]
   },
   "subassemblies": {
-    "in_production": [],
+    "in_production": [
+      {
+        "assembly_number": "ASSY-00164",
+        "item_name": "Sit-to-Stand standing frame(without cushions)",
+        "quantity": 4.0,
+        "date": "2026-05-08",
+        "status": "draft",
+        "production_staff": [
+          "Oswald"
+        ],
+        "serial_numbers": [
+          "ST846",
+          "ST847",
+          "ST848",
+          "ST849"
+        ]
+      }
+    ],
     "completed": [
       {
         "assembly_number": "ASSY-00137",
@@ -64,7 +95,79 @@
           "Wian/CNC Team"
         ],
         "serial_numbers": [],
-        "completed_date": "2026-05-06T10:37:26+0200"
+        "completed_date": "2026-05-11T13:35:58+0200"
+      },
+      {
+        "assembly_number": "ASSY-00171",
+        "item_name": "Wheelchair Tray 25cm Wood (CNC cut only)",
+        "quantity": 3.0,
+        "date": "2026-05-11",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-11T13:39:04+0200"
+      },
+      {
+        "assembly_number": "ASSY-00166",
+        "item_name": "Wheelchair Tray 36cm Wood (CNC cut only)",
+        "quantity": 8.0,
+        "date": "2026-05-11",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-11T13:36:31+0200"
+      },
+      {
+        "assembly_number": "ASSY-00168",
+        "item_name": "Wheelchair Tray 41cm Wood (CNC cut only)",
+        "quantity": 16.0,
+        "date": "2026-05-11",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-11T13:38:07+0200"
+      },
+      {
+        "assembly_number": "ASSY-00167",
+        "item_name": "Wheelchair Tray 41cm Wood (CNC cut only)",
+        "quantity": 8.0,
+        "date": "2026-05-11",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-11T13:37:47+0200"
+      },
+      {
+        "assembly_number": "ASSY-00169",
+        "item_name": "Wheelchair Tray 46cm Wood (CNC cut only)",
+        "quantity": 8.0,
+        "date": "2026-05-11",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-11T13:38:48+0200"
+      },
+      {
+        "assembly_number": "ASSY-00170",
+        "item_name": "Wheelchair Tray 51cm Wood (CNC cut only)",
+        "quantity": 6.0,
+        "date": "2026-05-11",
+        "status": "bundled",
+        "production_staff": [
+          "Wian/CNC Team"
+        ],
+        "serial_numbers": [],
+        "completed_date": "2026-05-11T13:39:04+0200"
       }
     ]
   }
